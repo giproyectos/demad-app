@@ -1,0 +1,6 @@
+{
+  "name": "Strata Demand & Supply Operations Suite",
+  "description": "Comprehensive demand management and operations planning system integrating S&OP, DRP, MPS, CRP, and MRP into a unified closed-loop supply chain platform.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
