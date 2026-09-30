@@ -13,6 +13,7 @@ import {
   CheckCircle2,
 } from 'lucide-react';
 import { ProcessStep } from '../../types/demand';
+import { useTranslation } from '../../i18n/i18n';
 
 interface OperationsActivitySidebarProps {
   onSelectStep: (step: ProcessStep) => void;
@@ -25,12 +26,13 @@ export const OperationsActivitySidebar: React.FC<OperationsActivitySidebarProps>
   onResolveBottleneck,
   onResolveShortage,
 }) => {
+  const { t } = useTranslation();
   return (
     <div className="bg-white/90 backdrop-blur-xl border border-white/80 rounded-[32px] p-6 shadow-[0_10px_35px_rgba(15,23,42,0.03)] space-y-6">
       {/* Top Header with title and circular icon buttons */}
       <div className="flex items-center justify-between">
         <h3 className="text-xl font-bold text-black tracking-tight font-sans">
-          Planning Actions
+          {t('pipeline.activity.title')}
         </h3>
 
         {/* Small circular quick action buttons matching image */}
@@ -38,28 +40,28 @@ export const OperationsActivitySidebar: React.FC<OperationsActivitySidebarProps>
           <button
             onClick={() => onSelectStep('sop')}
             className="w-7 h-7 rounded-full bg-white hover:bg-slate-50 flex items-center justify-center text-slate-700 shadow-2xs transition-transform active:scale-95 cursor-pointer"
-            title="S&OP Meeting"
+            title={t('pipeline.activity.sopMeeting')}
           >
             <Calendar className="w-3.5 h-3.5" />
           </button>
           <button
             onClick={() => onSelectStep('crp')}
             className="w-7 h-7 rounded-full bg-white hover:bg-slate-50 flex items-center justify-center text-slate-700 shadow-2xs transition-transform active:scale-95 cursor-pointer"
-            title="Work Center Schedule"
+            title={t('pipeline.activity.workCenterSchedule')}
           >
             <Cpu className="w-3.5 h-3.5" />
           </button>
           <button
             onClick={() => onSelectStep('drp')}
             className="w-7 h-7 rounded-full bg-white hover:bg-slate-50 flex items-center justify-center text-slate-700 shadow-2xs transition-transform active:scale-95 cursor-pointer"
-            title="Depot Transfer"
+            title={t('pipeline.activity.depotTransfer')}
           >
             <Truck className="w-3.5 h-3.5" />
           </button>
           <button
             onClick={() => onSelectStep('mrp')}
             className="w-7 h-7 rounded-full bg-white hover:bg-slate-50 flex items-center justify-center text-slate-700 shadow-2xs transition-transform active:scale-95 cursor-pointer"
-            title="Component Orders"
+            title={t('pipeline.activity.componentOrders')}
           >
             <Boxes className="w-3.5 h-3.5" />
           </button>
@@ -68,8 +70,8 @@ export const OperationsActivitySidebar: React.FC<OperationsActivitySidebarProps>
 
       {/* Subhead with item count */}
       <div className="flex items-center justify-between text-xs font-semibold text-slate-500 pt-1">
-        <span>Upcoming Critical Milestones</span>
-        <span className="font-bold text-black font-mono">4 Actions</span>
+        <span>{t('pipeline.activity.upcomingMilestones')}</span>
+        <span className="font-bold text-black font-mono">{t('pipeline.activity.actionsCount', { count: 4 })}</span>
       </div>
 
       {/* Colorful rounded cards matching reference images */}
@@ -84,23 +86,23 @@ export const OperationsActivitySidebar: React.FC<OperationsActivitySidebarProps>
               <div className="w-6 h-6 rounded-full bg-black/10 flex items-center justify-center">
                 <Calendar className="w-3.5 h-3.5 text-black" />
               </div>
-              <span>12 Oct · 10:00 AM</span>
+              <span>{t('pipeline.activity.card1.when')}</span>
             </div>
             <ArrowUpRight className="w-4 h-4 text-black group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
           </div>
 
           <h4 className="text-sm font-black mt-2 leading-tight">
-            Lock Executive S&OP Consensus Plan
+            {t('pipeline.activity.card1.title')}
           </h4>
           <p className="text-xs text-black/75 mt-1 leading-snug">
-            Reconcile unconstrained commercial forecast with VP of Operations.
+            {t('pipeline.activity.card1.description')}
           </p>
 
           <div className="mt-3 flex items-center gap-2 text-[11px] font-semibold text-black/80">
             <div className="w-5 h-5 rounded-full bg-black/15 flex items-center justify-center text-[10px] font-bold">
               VP
             </div>
-            <span>VP Ops & VP Sales · Conf Room 4</span>
+            <span>{t('pipeline.activity.card1.attendees')}</span>
           </div>
         </div>
 
@@ -114,21 +116,21 @@ export const OperationsActivitySidebar: React.FC<OperationsActivitySidebarProps>
               <div className="w-6 h-6 rounded-full bg-black/10 flex items-center justify-center">
                 <Zap className="w-3.5 h-3.5 text-black" />
               </div>
-              <span>13 Oct · Week 42</span>
+              <span>{t('pipeline.activity.card2.when')}</span>
             </div>
             <ArrowUpRight className="w-4 h-4 text-black group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
           </div>
 
           <h4 className="text-sm font-black mt-2 leading-tight">
-            Authorize Overtime for CNC Cell (WC-101)
+            {t('pipeline.activity.card2.title')}
           </h4>
           <p className="text-xs text-black/75 mt-1 leading-snug">
-            Peak machine load is 115.7%. Authorize +16h shift to protect MPS.
+            {t('pipeline.activity.card2.description')}
           </p>
 
           <div className="mt-3 flex items-center gap-2 text-[11px] font-semibold text-black/80">
             <span className="w-2 h-2 rounded-full bg-black"></span>
-            <span>Click to authorize shift & clear bottleneck</span>
+            <span>{t('pipeline.activity.card2.cta')}</span>
           </div>
         </div>
 
@@ -142,21 +144,21 @@ export const OperationsActivitySidebar: React.FC<OperationsActivitySidebarProps>
               <div className="w-6 h-6 rounded-full bg-black/10 flex items-center justify-center">
                 <Boxes className="w-3.5 h-3.5 text-black" />
               </div>
-              <span>15 Oct · W44 Shortage</span>
+              <span>{t('pipeline.activity.card3.when')}</span>
             </div>
             <ArrowUpRight className="w-4 h-4 text-black group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
           </div>
 
           <h4 className="text-sm font-black mt-2 leading-tight">
-            Expedite PO #8892 (Infineon MOSFET)
+            {t('pipeline.activity.card3.title')}
           </h4>
           <p className="text-xs text-black/75 mt-1 leading-snug">
-            Pull forward 1,000 EA power MOSFET inverters by 1 week to avoid stockout.
+            {t('pipeline.activity.card3.description')}
           </p>
 
           <div className="mt-3 flex items-center gap-2 text-[11px] font-semibold text-black/80">
             <span className="w-2 h-2 rounded-full bg-black"></span>
-            <span>Click to transmit expedited PO notice</span>
+            <span>{t('pipeline.activity.card3.cta')}</span>
           </div>
         </div>
       </div>

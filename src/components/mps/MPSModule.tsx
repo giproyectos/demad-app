@@ -10,6 +10,7 @@ import {
   Calendar,
   X,
 } from 'lucide-react';
+import { useTranslation } from '../../i18n/i18n';
 
 interface MPSModuleProps {
   skuRows: MPSSkuRow[];
@@ -22,6 +23,7 @@ export const MPSModule: React.FC<MPSModuleProps> = ({
   onUpdateSku,
   onPromoteToCRP,
 }) => {
+  const { t } = useTranslation();
   const [selectedSkuId, setSelectedSkuId] = useState<string>(skuRows[0]?.skuId || 'sku-4001');
   const [orderModalOpen, setOrderModalOpen] = useState(false);
   const [simWeek, setSimWeek] = useState('W42');
@@ -84,13 +86,17 @@ export const MPSModule: React.FC<MPSModuleProps> = ({
       setSimResult({
         possible: true,
         atpAvailable: targetPeriod.cumulativeATP,
-        message: `Order of ${simQty} units can be promised in ${simWeek}. Cumulative ATP balance allows immediate commitment.`,
+        message: t('mps.simulateModal.possibleMessage', { qty: simQty, week: simWeek }),
       });
     } else {
       setSimResult({
         possible: false,
         atpAvailable: targetPeriod.cumulativeATP,
-        message: `Capacity constraint! Only ${targetPeriod.cumulativeATP} units available in ${simWeek}. Shortage of ${simQty - targetPeriod.cumulativeATP} units.`,
+        message: t('mps.simulateModal.shortageMessage', {
+          atp: targetPeriod.cumulativeATP,
+          week: simWeek,
+          shortage: simQty - targetPeriod.cumulativeATP,
+        }),
       });
     }
   };
@@ -126,15 +132,15 @@ export const MPSModule: React.FC<MPSModuleProps> = ({
         <div>
           <div className="flex items-center gap-2 text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">
             <span className="w-2 h-2 rounded-full bg-[#7AFFA1]"></span>
-            <span className="text-black font-extrabold">Stage 03</span>
+            <span className="text-black font-extrabold">{t('mps.stage')}</span>
             <span className="text-slate-300">·</span>
-            <span>Master Production Schedule & ATP</span>
+            <span>{t('mps.horizonLabel')}</span>
           </div>
           <h1 className="text-xl sm:text-2xl font-black tracking-tight text-slate-950 flex flex-wrap items-center gap-3">
-            <span>Master Production Schedule (MPS)</span>
+            <span>{t('mps.title')}</span>
           </h1>
           <p className="text-xs text-slate-500 mt-0.5 font-medium">
-            Lock assembly lots across Frozen, Slushy, and Liquid time fences with real-time Available-to-Promise.
+            {t('mps.subtitle')}
           </p>
         </div>
 
@@ -147,14 +153,14 @@ export const MPSModule: React.FC<MPSModuleProps> = ({
             className="px-3.5 py-1.5 text-xs font-bold text-black bg-[#FFF87C] hover:opacity-90 rounded-full flex items-center gap-1.5 transition-all cursor-pointer shadow-2xs"
           >
             <ShoppingCart className="w-3.5 h-3.5" />
-            <span>Simulate Order ATP</span>
+            <span>{t('mps.simulateOrderAtp')}</span>
           </button>
 
           <button
             onClick={onPromoteToCRP}
             className="px-4 py-2 text-xs font-bold text-white bg-slate-950 hover:bg-black rounded-full flex items-center gap-1.5 transition-all cursor-pointer shadow-sm active:scale-95"
           >
-            <span>Verify Capacity in CRP</span>
+            <span>{t('mps.verifyCapacityInCrp')}</span>
             <ArrowRight className="w-3.5 h-3.5 text-[#7AFFA1]" />
           </button>
         </div>
@@ -163,7 +169,7 @@ export const MPSModule: React.FC<MPSModuleProps> = ({
       {/* SKU Selector & Inventory Profile Bar */}
       <div className="glass-panel rounded-3xl p-4.5 flex flex-col lg:flex-row lg:items-center justify-between gap-4">
         <div className="flex flex-wrap items-center gap-3">
-          <span className="text-xs text-slate-500 font-bold">Finished Item:</span>
+          <span className="text-xs text-slate-500 font-bold">{t('mps.skuBar.finishedItem')}</span>
           <div className="flex rounded-full glass-pill p-1">
             {skuRows.map((sku) => (
               <button
@@ -184,19 +190,19 @@ export const MPSModule: React.FC<MPSModuleProps> = ({
 
         <div className="flex items-center gap-4 text-xs text-slate-600 font-semibold flex-wrap">
           <div>
-            <span>Current Stock: </span>
-            <strong className="text-black font-mono font-bold">{currentSku.currentOnHand} units</strong>
+            <span>{t('mps.skuBar.currentStock')} </span>
+            <strong className="text-black font-mono font-bold">{currentSku.currentOnHand} {t('mps.kpi.units')}</strong>
           </div>
           <span className="text-slate-300">·</span>
           <div>
-            <span>Safety Stock: </span>
-            <strong className="text-black font-mono font-bold">{currentSku.safetyStock} units</strong>
+            <span>{t('mps.skuBar.safetyStock')} </span>
+            <strong className="text-black font-mono font-bold">{currentSku.safetyStock} {t('mps.kpi.units')}</strong>
           </div>
           <span className="text-slate-300">·</span>
           <div>
-            <span>Final ATP: </span>
+            <span>{t('mps.skuBar.finalAtp')} </span>
             <strong className="text-emerald-900 font-mono font-bold bg-[#7AFFA1]/40 px-2 py-0.5 rounded-full">
-              {currentSku.periods[currentSku.periods.length - 1]?.cumulativeATP} units
+              {currentSku.periods[currentSku.periods.length - 1]?.cumulativeATP} {t('mps.kpi.units')}
             </strong>
           </div>
         </div>
@@ -207,9 +213,9 @@ export const MPSModule: React.FC<MPSModuleProps> = ({
         <div className="flex items-center justify-between text-xs">
           <div className="flex items-center gap-2">
             <Calendar className="w-4 h-4 text-slate-700" />
-            <span className="font-extrabold text-black">Manufacturing Time Fence Horizons</span>
+            <span className="font-extrabold text-black">{t('mps.fence.title')}</span>
           </div>
-          <span className="text-slate-500 font-medium">Weeks 40 through 47</span>
+          <span className="text-slate-500 font-medium">{t('mps.fence.weeksRange')}</span>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
@@ -217,14 +223,14 @@ export const MPSModule: React.FC<MPSModuleProps> = ({
             <div className="flex items-center justify-between">
               <span className="font-extrabold text-xs flex items-center gap-1.5">
                 <Lock className="w-3.5 h-3.5 text-black" />
-                Frozen Zone (W40 - W41)
+                {t('mps.fence.frozen.label')}
               </span>
               <span className="text-[9px] font-mono font-bold bg-white px-2 py-0.5 rounded-full shadow-2xs">
-                Days 1 - 14
+                {t('mps.fence.frozen.days')}
               </span>
             </div>
             <p className="text-xs text-slate-700 mt-1.5 leading-snug font-medium">
-              Work orders dispatched to plant floor. Locked against automated adjustments.
+              {t('mps.fence.frozen.description')}
             </p>
           </div>
 
@@ -232,14 +238,14 @@ export const MPSModule: React.FC<MPSModuleProps> = ({
             <div className="flex items-center justify-between">
               <span className="font-extrabold text-xs flex items-center gap-1.5">
                 <Unlock className="w-3.5 h-3.5 text-black" />
-                Slushy Zone (W42 - W44)
+                {t('mps.fence.slushy.label')}
               </span>
               <span className="text-[9px] font-mono font-bold bg-white px-2 py-0.5 rounded-full shadow-2xs">
-                Days 15 - 35
+                {t('mps.fence.slushy.days')}
               </span>
             </div>
             <p className="text-xs text-slate-700 mt-1.5 leading-snug font-medium">
-              Capacity trade-offs permitted with plant supervisor approval.
+              {t('mps.fence.slushy.description')}
             </p>
           </div>
 
@@ -247,14 +253,14 @@ export const MPSModule: React.FC<MPSModuleProps> = ({
             <div className="flex items-center justify-between">
               <span className="font-extrabold text-xs flex items-center gap-1.5">
                 <Sparkles className="w-3.5 h-3.5 text-black" />
-                Liquid Zone (W45 - W47)
+                {t('mps.fence.liquid.label')}
               </span>
               <span className="text-[9px] font-mono font-bold bg-white px-2 py-0.5 rounded-full shadow-2xs">
-                Days 36 - 56+
+                {t('mps.fence.liquid.days')}
               </span>
             </div>
             <p className="text-xs text-slate-700 mt-1.5 leading-snug font-medium">
-              Completely flexible. Dynamically re-planned from incoming DRP pull.
+              {t('mps.fence.liquid.description')}
             </p>
           </div>
         </div>
@@ -265,22 +271,22 @@ export const MPSModule: React.FC<MPSModuleProps> = ({
         <div className="px-5 py-4 border-b border-black/5 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div>
             <h3 className="text-base font-extrabold text-black">
-              Time-Phased Master Schedule & Available-to-Promise (ATP)
+              {t('mps.matrix.title')}
             </h3>
             <p className="text-xs text-slate-500 mt-0.5 font-medium">
-              Input planned production builds in Slushy & Liquid periods; automatic ATP generation
+              {t('mps.matrix.subtitle')}
             </p>
           </div>
 
           <div className="flex items-center gap-4 text-xs font-bold">
             <div>
-              <span className="text-slate-500">Planned Build: </span>
-              <span className="font-mono text-black font-black">{totalBuild} units</span>
+              <span className="text-slate-500">{t('mps.matrix.plannedBuild')} </span>
+              <span className="font-mono text-black font-black">{totalBuild} {t('mps.kpi.units')}</span>
             </div>
             <span className="text-slate-300">·</span>
             <div>
-              <span className="text-slate-500">Firm Booked: </span>
-              <span className="font-mono text-black font-black">{totalOrders} units</span>
+              <span className="text-slate-500">{t('mps.matrix.firmBooked')} </span>
+              <span className="font-mono text-black font-black">{totalOrders} {t('mps.kpi.units')}</span>
             </div>
           </div>
         </div>
@@ -290,7 +296,7 @@ export const MPSModule: React.FC<MPSModuleProps> = ({
             <thead className="bg-white/30 text-slate-400 font-mono text-[11px] uppercase border-b border-black/5">
               <tr>
                 <th className="py-2.5 px-5 font-bold min-w-[220px]">
-                  MPS Planning Row
+                  {t('mps.matrix.column')}
                 </th>
                 {currentSku.periods.map((p) => (
                   <th key={p.week} className="py-2.5 px-4 text-right font-bold min-w-[85px]">
@@ -305,7 +311,7 @@ export const MPSModule: React.FC<MPSModuleProps> = ({
                             : 'bg-[#7AFFA1] text-black font-extrabold'
                         }`}
                       >
-                        {p.zone}
+                        {t(`mps.zone.${p.zone}`)}
                       </span>
                     </div>
                   </th>
@@ -316,7 +322,7 @@ export const MPSModule: React.FC<MPSModuleProps> = ({
               {/* Forecast Demand */}
               <tr className="hover:bg-white/50 transition-colors">
                 <td className="py-2.5 px-5 font-medium text-slate-600">
-                  Forecast Demand (Independent)
+                  {t('mps.matrix.forecastDemand')}
                 </td>
                 {currentSku.periods.map((p) => (
                   <td key={p.week} className="py-2.5 px-4 text-right font-mono tabular-nums text-slate-500">
@@ -329,9 +335,9 @@ export const MPSModule: React.FC<MPSModuleProps> = ({
               <tr className="hover:bg-white/50 transition-colors bg-white/20">
                 <td className="py-2.5 px-5 font-bold text-black">
                   <div className="flex items-center justify-between gap-2">
-                    <span>Customer Orders (Committed Bookings)</span>
+                    <span>{t('mps.matrix.customerOrders')}</span>
                     <span className="text-[9px] bg-slate-100 text-slate-600 px-2 py-0.5 rounded-full font-sans font-medium shrink-0">
-                      Bookings
+                      {t('mps.matrix.bookings')}
                     </span>
                   </div>
                 </td>
@@ -345,7 +351,7 @@ export const MPSModule: React.FC<MPSModuleProps> = ({
               {/* Projected Available Balance */}
               <tr className="hover:bg-white/50 transition-colors">
                 <td className="py-2.5 px-5 font-bold text-black">
-                  Projected Available Balance (PAB)
+                  {t('mps.matrix.projectedAvailableBalance')}
                 </td>
                 {currentSku.periods.map((p) => (
                   <td
@@ -365,9 +371,9 @@ export const MPSModule: React.FC<MPSModuleProps> = ({
               <tr className="bg-[#dbfced]/30 font-bold hover:bg-[#dbfced]/50 transition-colors">
                 <td className="py-3 px-5 text-black">
                   <div className="flex items-center justify-between gap-2">
-                    <span>Master Production Schedule (MPS Build)</span>
+                    <span>{t('mps.matrix.mpsBuild')}</span>
                     <span className="text-[9px] bg-[#7AFFA1] text-black px-2 py-0.5 rounded-full shadow-2xs font-extrabold shrink-0">
-                      Editable Slush/Liquid
+                      {t('mps.matrix.editableSlushLiquid')}
                     </span>
                   </div>
                 </td>
@@ -399,8 +405,8 @@ export const MPSModule: React.FC<MPSModuleProps> = ({
               <tr className="hover:bg-white/50 transition-colors">
                 <td className="py-2.5 px-5 text-slate-700 font-medium">
                   <div className="flex items-center gap-1.5">
-                    <span>Discrete ATP (Per-Period)</span>
-                    <span title="Uncommitted inventory for immediate promise in this period">
+                    <span>{t('mps.matrix.discreteAtp')}</span>
+                    <span title={t('mps.matrix.discreteAtpTooltip')}>
                       <Info className="w-3.5 h-3.5 text-slate-400" />
                     </span>
                   </div>
@@ -416,9 +422,9 @@ export const MPSModule: React.FC<MPSModuleProps> = ({
               <tr className="bg-[#fffde3]/40 font-bold hover:bg-[#fffde3]/60 transition-colors">
                 <td className="py-3 px-5 text-black">
                   <div className="flex items-center justify-between gap-2">
-                    <span>Cumulative Available-to-Promise (ATP)</span>
+                    <span>{t('mps.matrix.cumulativeAtp')}</span>
                     <span className="text-[9px] bg-[#FFF87C] text-black px-2 py-0.5 rounded-full shadow-2xs font-extrabold shrink-0">
-                      Order Promising
+                      {t('mps.matrix.orderPromising')}
                     </span>
                   </div>
                 </td>
@@ -445,7 +451,7 @@ export const MPSModule: React.FC<MPSModuleProps> = ({
             <div className="flex items-center justify-between">
               <h3 className="text-base font-black text-black flex items-center gap-2">
                 <ShoppingCart className="w-4 h-4 text-slate-700" />
-                <span>Simulate Real-Time Order Commitment (ATP)</span>
+                <span>{t('mps.simulateModal.title')}</span>
               </h3>
               <button
                 onClick={() => setOrderModalOpen(false)}
@@ -456,12 +462,12 @@ export const MPSModule: React.FC<MPSModuleProps> = ({
             </div>
 
             <p className="text-xs text-slate-600 font-medium">
-              Test customer order promise capability against real-time Master Production Schedule without breaking frozen manufacturing lots.
+              {t('mps.simulateModal.description')}
             </p>
 
             <div className="space-y-3 text-xs">
               <div>
-                <label className="block font-bold text-slate-700 mb-1">Target Delivery Week:</label>
+                <label className="block font-bold text-slate-700 mb-1">{t('mps.simulateModal.targetWeek')}</label>
                 <select
                   value={simWeek}
                   onChange={(e) => setSimWeek(e.target.value)}
@@ -469,14 +475,18 @@ export const MPSModule: React.FC<MPSModuleProps> = ({
                 >
                   {currentSku.periods.map((p) => (
                     <option key={p.week} value={p.week}>
-                      {p.week} ({p.zone} Zone) - Cumulative ATP: {p.cumulativeATP} units
+                      {t('mps.simulateModal.optionLabel', {
+                        week: p.week,
+                        zone: t(`mps.zone.${p.zone}`),
+                        atp: p.cumulativeATP,
+                      })}
                     </option>
                   ))}
                 </select>
               </div>
 
               <div>
-                <label className="block font-bold text-slate-700 mb-1">Requested Quantity (Units):</label>
+                <label className="block font-bold text-slate-700 mb-1">{t('mps.simulateModal.requestedQty')}</label>
                 <input
                   type="number"
                   value={simQty}
@@ -489,7 +499,7 @@ export const MPSModule: React.FC<MPSModuleProps> = ({
                 onClick={handleSimulateOrder}
                 className="w-full py-2.5 rounded-full text-xs font-bold text-black bg-[#FFF87C] hover:opacity-90 transition-all cursor-pointer shadow-2xs"
               >
-                Run ATP Verification Check
+                {t('mps.simulateModal.runCheck')}
               </button>
             </div>
 
@@ -502,8 +512,8 @@ export const MPSModule: React.FC<MPSModuleProps> = ({
                 }`}
               >
                 <div className="font-black flex items-center justify-between">
-                  <span>{simResult.possible ? 'Order Promise Feasible' : 'Capacity Shortage Alert'}</span>
-                  <span className="font-mono">{simResult.atpAvailable} units available</span>
+                  <span>{simResult.possible ? t('mps.simulateModal.feasible') : t('mps.simulateModal.shortageAlert')}</span>
+                  <span className="font-mono">{simResult.atpAvailable} {t('mps.simulateModal.unitsAvailable')}</span>
                 </div>
                 <p className="leading-snug font-medium">{simResult.message}</p>
               </div>
@@ -514,14 +524,14 @@ export const MPSModule: React.FC<MPSModuleProps> = ({
                 onClick={() => setOrderModalOpen(false)}
                 className="px-4 py-2 rounded-full text-xs font-bold text-slate-600 hover:text-black glass-pill cursor-pointer"
               >
-                Cancel
+                {t('mps.simulateModal.cancel')}
               </button>
               {simResult?.possible && (
                 <button
                   onClick={handleCommitOrderToMPS}
                   className="px-5 py-2 rounded-full text-xs font-bold text-white bg-slate-950 hover:bg-black transition-all cursor-pointer shadow-sm"
                 >
-                  Commit Booked Order to MPS
+                  {t('mps.simulateModal.commit')}
                 </button>
               )}
             </div>

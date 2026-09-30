@@ -1,6 +1,7 @@
 import React from 'react';
 import { ProcessStep, PlanningScenario } from '../types/demand';
 import { RefreshCw, Download, Layers, Search, Bell } from 'lucide-react';
+import { useTranslation } from '../i18n/i18n';
 
 interface HeaderProps {
   currentStep: ProcessStep;
@@ -27,13 +28,15 @@ export const Header: React.FC<HeaderProps> = ({
   onOpenScenarioModal,
   alertCount,
 }) => {
+  const { t, lang, setLang } = useTranslation();
+
   const stepTitles: Record<ProcessStep, string> = {
-    process_map: 'Global Flow & Executive Dashboard',
-    sop: 'Sales & Operations Consensus (S&OP)',
-    drp: 'Distribution Requirements (DRP)',
-    mps: 'Master Production Schedule (MPS)',
-    crp: 'Capacity Requirements (CRP)',
-    mrp: 'Material Requirements (MRP)',
+    process_map: t('common.stepTitles.process_map'),
+    sop: t('common.stepTitles.sop'),
+    drp: t('common.stepTitles.drp'),
+    mps: t('common.stepTitles.mps'),
+    crp: t('common.stepTitles.crp'),
+    mrp: t('common.stepTitles.mrp'),
   };
 
   return (
@@ -49,7 +52,7 @@ export const Header: React.FC<HeaderProps> = ({
           </span>
           <span className="text-slate-300 shrink-0 hidden sm:inline">·</span>
           <span className="text-[10px] font-extrabold text-emerald-950 bg-[#7AFFA1]/60 px-2 py-0.5 rounded-full shrink-0 border border-[#7AFFA1]/70 hidden lg:inline-block">
-            Live
+            {t('common.header.live')}
           </span>
         </div>
       </div>
@@ -61,7 +64,7 @@ export const Header: React.FC<HeaderProps> = ({
       >
         <div className="flex items-center gap-2 min-w-0">
           <Search className="w-3.5 h-3.5 text-slate-400 group-hover:text-black transition-colors shrink-0" />
-          <span className="font-semibold text-slate-400 text-xs truncate">Search SKUs, BOM...</span>
+          <span className="font-semibold text-slate-400 text-xs truncate">{t('common.header.searchPlaceholder')}</span>
         </div>
         <kbd className="px-2 py-0.5 text-[10px] font-mono font-bold text-slate-400 bg-slate-100/80 rounded-full border border-slate-200 shrink-0">
           ⌘K
@@ -70,21 +73,41 @@ export const Header: React.FC<HeaderProps> = ({
 
       {/* Right Top Action Pills */}
       <div className="flex items-center gap-2 shrink-0">
+        {/* Language Toggle Pill */}
+        <div className="flex items-center gap-0.5 p-0.5 rounded-full glass-pill" title={t('common.language.toggleLabel')}>
+          <button
+            onClick={() => setLang('en')}
+            className={`px-2.5 py-1 text-[11px] font-bold rounded-full transition-all cursor-pointer ${
+              lang === 'en' ? 'bg-slate-950 text-white' : 'text-slate-500 hover:text-black'
+            }`}
+          >
+            EN
+          </button>
+          <button
+            onClick={() => setLang('es')}
+            className={`px-2.5 py-1 text-[11px] font-bold rounded-full transition-all cursor-pointer ${
+              lang === 'es' ? 'bg-slate-950 text-white' : 'text-slate-500 hover:text-black'
+            }`}
+          >
+            ES
+          </button>
+        </div>
+
         {/* Scenario Pill */}
         <button
           onClick={onOpenScenarioModal}
           className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold text-slate-800 glass-pill hover:bg-white rounded-full transition-all cursor-pointer"
         >
           <Layers className="w-3.5 h-3.5 text-slate-500 shrink-0" />
-          <span className="text-slate-500 font-medium hidden sm:inline">Scenario:</span>
-          <span className="capitalize text-black font-extrabold">{scenario}</span>
+          <span className="text-slate-500 font-medium hidden sm:inline">{t('common.header.scenarioLabel')}</span>
+          <span className="capitalize text-black font-extrabold">{t(`common.scenarios.${scenario}`)}</span>
         </button>
 
         {/* Alerts Pill */}
         <button
           onClick={onOpenAlertsDrawer}
           className="relative w-8 h-8 rounded-full glass-pill hover:bg-white flex items-center justify-center text-slate-600 hover:text-black transition-all cursor-pointer"
-          title="Open Exceptions & Alerts"
+          title={t('common.header.alertsTitle')}
         >
           <Bell className="w-3.5 h-3.5" />
           {alertCount > 0 && (
@@ -100,7 +123,7 @@ export const Header: React.FC<HeaderProps> = ({
           className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold text-slate-700 glass-pill hover:bg-white rounded-full transition-all cursor-pointer"
         >
           <Download className="w-3.5 h-3.5 text-slate-500" />
-          <span>Export</span>
+          <span>{t('common.header.export')}</span>
         </button>
 
         {/* Primary Action Button (Pure Black Pill) */}
@@ -112,7 +135,7 @@ export const Header: React.FC<HeaderProps> = ({
           <RefreshCw
             className={`w-3.5 h-3.5 ${isRegenerating ? 'animate-spin text-[#7AFFA1]' : 'text-[#7AFFA1]'}`}
           />
-          <span className="whitespace-nowrap">{isRegenerating ? 'Running...' : 'Regenerate'}</span>
+          <span className="whitespace-nowrap">{isRegenerating ? t('common.header.running') : t('common.header.regenerate')}</span>
         </button>
       </div>
     </header>

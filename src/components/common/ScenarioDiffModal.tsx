@@ -1,6 +1,7 @@
 import React from 'react';
 import { Layers, X, TrendingUp, AlertTriangle, ShieldCheck, CheckCircle2, ArrowRight } from 'lucide-react';
 import { PlanningScenario } from '../../types/demand';
+import { useTranslation } from '../../i18n/i18n';
 
 interface ScenarioDiffModalProps {
   isOpen: boolean;
@@ -15,6 +16,7 @@ export const ScenarioDiffModal: React.FC<ScenarioDiffModalProps> = ({
   activeScenario,
   onApplyScenario,
 }) => {
+  const { t } = useTranslation();
   if (!isOpen) return null;
 
   const scenarios: {
@@ -34,14 +36,14 @@ export const ScenarioDiffModal: React.FC<ScenarioDiffModalProps> = ({
   }[] = [
     {
       id: 'baseline',
-      name: 'Baseline FY26 Tactical Plan',
-      tag: 'Operating Baseline',
-      description: 'Standard consensus demand based on multi-variate statistical forecasting and validated sales pipeline.',
-      demandVolume: '16,310 units',
+      name: t('modals.scenarioDiff.scenarios.baseline.name'),
+      tag: t('modals.scenarioDiff.scenarios.baseline.tag'),
+      description: t('modals.scenarioDiff.scenarios.baseline.description'),
+      demandVolume: t('modals.scenarioDiff.metrics.baselineDemand'),
       revenueTarget: '$27.54M',
       plantUtilization: '94.2%',
       bottleneckCount: 1,
-      inventoryDays: '27.3 days',
+      inventoryDays: t('modals.scenarioDiff.metrics.baselineInventoryDays'),
       feasibilityScore: '96.4%',
       accentBg: 'bg-[#dbfced]/50',
       accentPill: 'bg-[#7AFFA1]',
@@ -49,30 +51,30 @@ export const ScenarioDiffModal: React.FC<ScenarioDiffModalProps> = ({
     },
     {
       id: 'surge',
-      name: 'Demand Surge Scenario (+18%)',
-      tag: 'Commercial Upside',
-      description: 'Hypothetical commercial surge from automotive robotics expansion and EU green energy incentives.',
-      demandVolume: '19,245 units (+18%)',
+      name: t('modals.scenarioDiff.scenarios.surge.name'),
+      tag: t('modals.scenarioDiff.scenarios.surge.tag'),
+      description: t('modals.scenarioDiff.scenarios.surge.description'),
+      demandVolume: t('modals.scenarioDiff.metrics.surgeDemand'),
       revenueTarget: '$32.50M (+$4.96M)',
-      plantUtilization: '111.4% (Overload)',
+      plantUtilization: t('modals.scenarioDiff.metrics.surgeUtilization'),
       bottleneckCount: 3,
-      inventoryDays: '19.8 days (-7.5d)',
-      feasibilityScore: '78.2% (Action Req.)',
+      inventoryDays: t('modals.scenarioDiff.metrics.surgeInventoryDays'),
+      feasibilityScore: t('modals.scenarioDiff.metrics.surgeFeasibility'),
       accentBg: 'bg-[#fffde3]/60',
       accentPill: 'bg-[#FFF87C]',
       tone: 'warning',
     },
     {
       id: 'constrained',
-      name: 'Supply Chain Constrained',
-      tag: 'Risk Mitigation',
-      description: 'Global wafer foundry allocation bottleneck (-25% raw material semiconductors) testing plant buffers.',
-      demandVolume: '12,230 units (-25%)',
+      name: t('modals.scenarioDiff.scenarios.constrained.name'),
+      tag: t('modals.scenarioDiff.scenarios.constrained.tag'),
+      description: t('modals.scenarioDiff.scenarios.constrained.description'),
+      demandVolume: t('modals.scenarioDiff.metrics.constrainedDemand'),
       revenueTarget: '$20.65M (-$6.89M)',
       plantUtilization: '74.8%',
       bottleneckCount: 0,
-      inventoryDays: '11.4 days (Depleted)',
-      feasibilityScore: '65.1% (Critical)',
+      inventoryDays: t('modals.scenarioDiff.metrics.constrainedInventoryDays'),
+      feasibilityScore: t('modals.scenarioDiff.metrics.constrainedFeasibility'),
       accentBg: 'bg-[#ffefe8]/60',
       accentPill: 'bg-[#FFA27D]',
       tone: 'critical',
@@ -90,10 +92,10 @@ export const ScenarioDiffModal: React.FC<ScenarioDiffModalProps> = ({
             </div>
             <div>
               <h2 className="text-lg font-black text-slate-950">
-                What-If Scenario Simulation & Variance Analysis
+                {t('modals.scenarioDiff.title')}
               </h2>
               <p className="text-xs text-slate-500 font-medium">
-                Compare multi-variate operational outcomes across demand spikes, supply constraints, and baseline targets
+                {t('modals.scenarioDiff.subtitle')}
               </p>
             </div>
           </div>
@@ -127,7 +129,7 @@ export const ScenarioDiffModal: React.FC<ScenarioDiffModalProps> = ({
                     {isSelected && (
                       <span className="flex items-center gap-1 text-[11px] font-black text-black">
                         <CheckCircle2 className="w-3.5 h-3.5" />
-                        <span>Active</span>
+                        <span>{t('modals.scenarioDiff.active')}</span>
                       </span>
                     )}
                   </div>
@@ -141,27 +143,27 @@ export const ScenarioDiffModal: React.FC<ScenarioDiffModalProps> = ({
 
                   <div className="mt-4 pt-3 border-t border-black/5 space-y-2 text-xs">
                     <div className="flex justify-between">
-                      <span className="text-slate-500 font-medium">6-Mo Demand:</span>
+                      <span className="text-slate-500 font-medium">{t('modals.scenarioDiff.demand6mo')}</span>
                       <span className="font-mono font-bold text-slate-900">{scen.demandVolume}</span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-slate-500 font-medium">Revenue Target:</span>
+                      <span className="text-slate-500 font-medium">{t('modals.scenarioDiff.revenueTarget')}</span>
                       <span className="font-mono font-bold text-black">{scen.revenueTarget}</span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-slate-500 font-medium">Plant Load Avg:</span>
+                      <span className="text-slate-500 font-medium">{t('modals.scenarioDiff.plantLoadAvg')}</span>
                       <span className="font-mono font-bold text-slate-900">{scen.plantUtilization}</span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-slate-500 font-medium">Bottlenecks:</span>
-                      <span className="font-mono font-bold text-slate-900">{scen.bottleneckCount} cells</span>
+                      <span className="text-slate-500 font-medium">{t('modals.scenarioDiff.bottlenecks')}</span>
+                      <span className="font-mono font-bold text-slate-900">{scen.bottleneckCount} {t('modals.scenarioDiff.cells')}</span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-slate-500 font-medium">Days of Supply:</span>
+                      <span className="text-slate-500 font-medium">{t('modals.scenarioDiff.daysOfSupply')}</span>
                       <span className="font-mono font-bold text-slate-900">{scen.inventoryDays}</span>
                     </div>
                     <div className="flex justify-between pt-1 border-t border-black/5">
-                      <span className="text-slate-600 font-bold">Feasibility Index:</span>
+                      <span className="text-slate-600 font-bold">{t('modals.scenarioDiff.feasibilityIndex')}</span>
                       <span className="font-mono font-black text-black">
                         {scen.feasibilityScore}
                       </span>
@@ -181,7 +183,7 @@ export const ScenarioDiffModal: React.FC<ScenarioDiffModalProps> = ({
                         : 'bg-black text-white hover:bg-slate-900'
                     }`}
                   >
-                    <span>{isSelected ? 'Current Scenario' : 'Apply Scenario'}</span>
+                    <span>{isSelected ? t('modals.scenarioDiff.currentScenario') : t('modals.scenarioDiff.applyScenario')}</span>
                     {!isSelected && <ArrowRight className="w-3.5 h-3.5 text-[#7AFFA1]" />}
                   </button>
                 </div>

@@ -35,6 +35,8 @@ import { ExportModal } from './components/common/ExportModal';
 import { CommandPalette } from './components/common/CommandPalette';
 import { AlertsDrawer } from './components/common/AlertsDrawer';
 import { ScenarioDiffModal } from './components/common/ScenarioDiffModal';
+import { OperationsActivitySidebar } from './components/common/OperationsActivitySidebar';
+import { LanguageProvider, useTranslation } from './i18n/i18n';
 import {
   CheckCircle2,
   AlertCircle,
@@ -42,6 +44,15 @@ import {
 } from 'lucide-react';
 
 export default function App() {
+  return (
+    <LanguageProvider>
+      <AppContent />
+    </LanguageProvider>
+  );
+}
+
+function AppContent() {
+  const { t } = useTranslation();
   const [currentStep, setCurrentStep] = useState<ProcessStep>('process_map');
   const [scenario, setScenario] = useState<PlanningScenario>('baseline');
   const [isRegenerating, setIsRegenerating] = useState<boolean>(false);
@@ -131,7 +142,7 @@ export default function App() {
         }),
       }));
       setWorkCenters(surgedWC);
-      showToast('Applied "Demand Surge (+18%)" simulation: DRP & work centers recomputed.', 'warning');
+      showToast(t('common.toasts.surgeApplied'), 'warning');
     } else if (scenario === 'constrained') {
       const constrainedWC = initialWorkCenters.map((wc) => ({
         ...wc,
@@ -148,7 +159,7 @@ export default function App() {
         }),
       }));
       setWorkCenters(constrainedWC);
-      showToast('Applied "Supply Constrained" scenario: Factory efficiency de-rated to 78%.', 'warning');
+      showToast(t('common.toasts.constrainedApplied'), 'warning');
     } else {
       setSopPlans(initialSOPPlans);
       setDrpRows(initialDRPRows);
@@ -156,14 +167,14 @@ export default function App() {
       setWorkCenters(initialWorkCenters);
       setMrpRecords(initialMRPRecords);
       setActionMessages(initialActionMessages);
-      showToast('Restored Baseline Operating Plan FY26.', 'info');
+      showToast(t('common.toasts.baselineRestored'), 'info');
     }
   }, [scenario]);
 
   // Full-Horizon Regeneration (Recomputing the full closed-loop thread)
   const handleRunRegeneration = () => {
     setIsRegenerating(true);
-    showToast('Running Full-Horizon Regeneration across S&OP ➔ DRP ➔ MPS ➔ CRP ➔ MRP...', 'info');
+    showToast(t('common.toasts.regenRunning'), 'info');
 
     setTimeout(() => {
       // Cascade S&OP consensus to DRP
@@ -202,32 +213,32 @@ export default function App() {
       );
 
       setIsRegenerating(false);
-      showToast('Regeneration completed! Master schedule and purchase requirements synchronized.', 'success');
+      showToast(t('common.toasts.regenComplete'), 'success');
     }, 1400);
   };
 
   // Promotion from S&OP to DRP
   const handlePromoteSOPtoDRP = () => {
     setCurrentStep('drp');
-    showToast('S&OP Consensus Approved! Disaggregated demand to 3 regional distribution hubs.', 'success');
+    showToast(t('common.toasts.sopApproved'), 'success');
   };
 
   // Promotion from DRP to MPS
   const handlePromoteDRPtoMPS = () => {
     setCurrentStep('mps');
-    showToast('DRP Net Requirements aggregated into Detroit Plant Master Production Schedule.', 'success');
+    showToast(t('common.toasts.drpAggregated'), 'success');
   };
 
   // Promotion from MPS to CRP
   const handlePromoteMPStoCRP = () => {
     setCurrentStep('crp');
-    showToast('Master Build Lots released to rough-cut & finite capacity loading.', 'success');
+    showToast(t('common.toasts.mpsReleased'), 'success');
   };
 
   // Promotion from CRP to MRP
   const handlePromoteCRPtoMRP = () => {
     setCurrentStep('mrp');
-    showToast('Capacity Feasibility validated! BOM exploded into component procurement ledger.', 'success');
+    showToast(t('common.toasts.crpValidated'), 'success');
   };
 
   // Action Order Execution
@@ -235,12 +246,12 @@ export default function App() {
     setActionMessages((prev) =>
       prev.map((a) => (a.id === actionId ? { ...a, executed: true } : a))
     );
-    showToast('Purchase Order transmitted to vendor EDI gateway.', 'success');
+    showToast(t('common.toasts.poTransmitted'), 'success');
   };
 
   const handleExecuteAllActions = () => {
     setActionMessages((prev) => prev.map((a) => ({ ...a, executed: true })));
-    showToast('All pending MRP supplier purchase orders released to procurement EDI.', 'success');
+    showToast(t('common.toasts.allPosReleased'), 'success');
   };
 
   // Fast Alert Resolution Handlers
@@ -268,14 +279,14 @@ export default function App() {
       return wcItem;
     });
     setWorkCenters(updated);
-    showToast('Weekend Overtime (+16h) authorized on WC-101. Bottleneck resolved!', 'success');
+    showToast(t('common.toasts.overtimeAuthorized'), 'success');
   };
 
   const handleResolveShortage = () => {
     setActionMessages((prev) =>
       prev.map((a) => (a.id === 'act-002' ? { ...a, executed: true } : a))
     );
-    showToast('PO #8892 expedited by 1 week with Infineon Technologies. W44 shortage mitigated.', 'success');
+    showToast(t('common.toasts.poExpedited'), 'success');
   };
 
   // Dynamic Status Badges for Sidebar
@@ -361,23 +372,30 @@ export default function App() {
         {/* Main Stage Component (Without any big static banner on every page!) */}
         <main className="flex-1 px-6 py-6 pb-16">
           {currentStep === 'process_map' && (
-            <ProcessMapModule
-              onSelectStep={setCurrentStep}
-              sopStatus={sopStatusText}
-              drpStatus={drpStatusText}
-              mpsStatus={mpsStatusText}
-              crpStatus={crpStatusText}
-              mrpActionCount={pendingActionCount}
-              sopPlans={sopPlans}
-              drpRows={drpRows}
-              mpsSkus={mpsSkus}
-              workCenters={workCenters}
-              mrpRecords={mrpRecords}
-              actionMessages={actionMessages}
-              scenario={scenario}
-              onOpenScenarioModal={() => setIsScenarioModalOpen(true)}
-              onRunRegeneration={handleRunRegeneration}
-            />
+            <div className="grid grid-cols-1 xl:grid-cols-[1fr_320px] gap-5 items-start">
+              <ProcessMapModule
+                onSelectStep={setCurrentStep}
+                sopStatus={sopStatusText}
+                drpStatus={drpStatusText}
+                mpsStatus={mpsStatusText}
+                crpStatus={crpStatusText}
+                mrpActionCount={pendingActionCount}
+                sopPlans={sopPlans}
+                drpRows={drpRows}
+                mpsSkus={mpsSkus}
+                workCenters={workCenters}
+                mrpRecords={mrpRecords}
+                actionMessages={actionMessages}
+                scenario={scenario}
+                onOpenScenarioModal={() => setIsScenarioModalOpen(true)}
+                onRunRegeneration={handleRunRegeneration}
+              />
+              <OperationsActivitySidebar
+                onSelectStep={setCurrentStep}
+                onResolveBottleneck={handleResolveBottleneck}
+                onResolveShortage={handleResolveShortage}
+              />
+            </div>
           )}
 
           {currentStep === 'sop' && (
@@ -386,7 +404,7 @@ export default function App() {
               plans={sopPlans}
               onUpdatePlan={(famId, updated) => {
                 setSopPlans((prev) => ({ ...prev, [famId]: updated }));
-                showToast('S&OP Demand Consensus updated.', 'info');
+                showToast(t('common.toasts.sopUpdated'), 'info');
               }}
               onPromoteToDRP={handlePromoteSOPtoDRP}
             />
@@ -398,7 +416,7 @@ export default function App() {
               rows={drpRows}
               onUpdateRows={(newRows) => {
                 setDrpRows(newRows);
-                showToast('DRP Replenishment grid adjusted.', 'info');
+                showToast(t('common.toasts.drpAdjusted'), 'info');
               }}
               onPromoteToMPS={handlePromoteDRPtoMPS}
             />
@@ -411,7 +429,7 @@ export default function App() {
                 setMpsSkus((prev) =>
                   prev.map((s) => (s.skuId === skuId ? updated : s))
                 );
-                showToast('MPS schedule and ATP buffers recomputed.', 'info');
+                showToast(t('common.toasts.mpsRecomputed'), 'info');
               }}
               onPromoteToCRP={handlePromoteMPStoCRP}
             />
@@ -422,7 +440,7 @@ export default function App() {
               workCenters={workCenters}
               onUpdateWorkCenters={(updated) => {
                 setWorkCenters(updated);
-                showToast('Work center finite capacity updated.', 'info');
+                showToast(t('common.toasts.crpUpdated'), 'info');
               }}
               onPromoteToMRP={handlePromoteCRPtoMRP}
             />
@@ -442,16 +460,16 @@ export default function App() {
         <footer className="px-6 py-4 text-xs text-slate-500 flex flex-col sm:flex-row items-center justify-between gap-3 border-t border-white/60 glass-panel">
           <div className="flex items-center gap-2.5">
             <span className="w-2 h-2 rounded-full bg-[#7AFFA1] animate-pulse"></span>
-            <span className="font-extrabold text-black">vx. Closed-Loop Demand & Operations Engine</span>
+            <span className="font-extrabold text-black">{t('common.footer.brand')}</span>
             <span className="text-slate-300">·</span>
-            <span>S&OP ➔ DRP ➔ MPS ➔ CRP ➔ MRP</span>
+            <span>{t('common.footer.flow')}</span>
           </div>
           <div className="flex items-center gap-4 text-slate-500 font-mono text-[11px]">
-            <span>Horizon: W40-W51</span>
+            <span>{t('common.footer.horizon')}</span>
             <span>·</span>
-            <span>ATP: Discrete Cumulative</span>
+            <span>{t('common.footer.atp')}</span>
             <span>·</span>
-            <span>Target Service Level: 98.5%</span>
+            <span>{t('common.footer.serviceLevel')}</span>
           </div>
         </footer>
       </div>
@@ -488,6 +506,12 @@ export default function App() {
         isOpen={isExportOpen}
         onClose={() => setIsExportOpen(false)}
         scenario={scenario}
+        sopPlans={sopPlans}
+        drpRows={drpRows}
+        mpsSkus={mpsSkus}
+        workCenters={workCenters}
+        mrpRecords={mrpRecords}
+        actionMessages={actionMessages}
       />
     </div>
   );

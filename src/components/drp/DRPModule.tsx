@@ -9,6 +9,7 @@ import {
   ArrowRightLeft,
   X,
 } from 'lucide-react';
+import { useTranslation } from '../../i18n/i18n';
 
 interface DRPModuleProps {
   depots: DistributionCenter[];
@@ -23,6 +24,7 @@ export const DRPModule: React.FC<DRPModuleProps> = ({
   onUpdateRows,
   onPromoteToMPS,
 }) => {
+  const { t } = useTranslation();
   const [selectedDepotId, setSelectedDepotId] = useState<string>('all');
   const [transferModalOpen, setTransferModalOpen] = useState(false);
   const [transferSource, setTransferSource] = useState('rdc-east');
@@ -69,7 +71,7 @@ export const DRPModule: React.FC<DRPModuleProps> = ({
     });
 
     onUpdateRows(updated);
-    setTransferNotice(`Rebalanced ${transferQty} units from ${transferSource.toUpperCase()} to ${transferTarget.toUpperCase()}. In-transit dispatch scheduled.`);
+    setTransferNotice(t('drp.transferNotice', { qty: transferQty, source: transferSource.toUpperCase(), target: transferTarget.toUpperCase() }));
     setTransferModalOpen(false);
     setTimeout(() => setTransferNotice(null), 4000);
   };
@@ -81,15 +83,15 @@ export const DRPModule: React.FC<DRPModuleProps> = ({
         <div>
           <div className="flex items-center gap-2 text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">
             <span className="w-2 h-2 rounded-full bg-[#FFF87C]"></span>
-            <span className="text-black font-extrabold">Stage 02</span>
+            <span className="text-black font-extrabold">{t('drp.stage')}</span>
             <span className="text-slate-300">·</span>
-            <span>Multi-Echelon Distribution Network</span>
+            <span>{t('drp.horizonLabel')}</span>
           </div>
           <h1 className="text-xl sm:text-2xl font-black tracking-tight text-slate-950 flex flex-wrap items-center gap-3">
-            <span>Distribution Requirements Planning (DRP)</span>
+            <span>{t('drp.title')}</span>
           </h1>
           <p className="text-xs text-slate-500 mt-0.5 font-medium">
-            Time-phase regional depot replenishment, track in-transit pipelines, and aggregate demand into factory master pull.
+            {t('drp.subtitle')}
           </p>
         </div>
 
@@ -99,14 +101,14 @@ export const DRPModule: React.FC<DRPModuleProps> = ({
             className="px-3.5 py-1.5 text-xs font-bold text-black bg-[#FFF87C] hover:opacity-90 rounded-full flex items-center gap-1.5 transition-all cursor-pointer shadow-2xs"
           >
             <ArrowRightLeft className="w-3.5 h-3.5" />
-            <span>Inter-Depot Transfer</span>
+            <span>{t('drp.interDepotTransfer')}</span>
           </button>
 
           <button
             onClick={onPromoteToMPS}
             className="px-4 py-2 text-xs font-bold text-white bg-slate-950 hover:bg-black rounded-full flex items-center gap-1.5 transition-all cursor-pointer shadow-sm active:scale-95"
           >
-            <span>Consolidate into MPS</span>
+            <span>{t('drp.consolidateIntoMps')}</span>
             <ArrowRight className="w-3.5 h-3.5 text-[#7AFFA1]" />
           </button>
         </div>
@@ -125,20 +127,20 @@ export const DRPModule: React.FC<DRPModuleProps> = ({
           <div>
             <h3 className="text-base font-extrabold text-black flex items-center gap-2">
               <Share2 className="w-4 h-4 text-slate-700" />
-              <span>Multi-Echelon Distribution Hubs</span>
+              <span>{t('drp.network.title')}</span>
             </h3>
             <p className="text-xs text-slate-500 mt-0.5 font-medium">
-              Replenishment pipelines linking Detroit Master Plant with regional distribution centers
+              {t('drp.network.subtitle')}
             </p>
           </div>
           <div className="text-xs text-slate-500 flex items-center gap-2">
-            <span className="font-semibold">Filter:</span>
+            <span className="font-semibold">{t('drp.network.filter')}</span>
             <select
               value={selectedDepotId}
               onChange={(e) => setSelectedDepotId(e.target.value)}
               className="bg-white/80 border border-slate-200 text-black text-xs font-semibold rounded-full px-3 py-1 focus:outline-none glass-pill cursor-pointer"
             >
-              <option value="all">All Regional Depots (3)</option>
+              <option value="all">{t('drp.network.allDepots')}</option>
               <option value="rdc-east">East Coast DC (Allentown, PA)</option>
               <option value="rdc-midwest">Midwest Regional (Joliet, IL)</option>
               <option value="rdc-west">Pacific West (Ontario, CA)</option>
@@ -156,20 +158,20 @@ export const DRPModule: React.FC<DRPModuleProps> = ({
                 <span>CDC-01 · DETROIT</span>
               </div>
               <h4 className="text-base font-black text-black mt-1">
-                Central Plant & Hub
+                {t('drp.network.centralPlant')}
               </h4>
               <p className="text-xs text-slate-500 mt-0.5 font-medium">
-                Assembly Line SD-120P
+                {t('drp.network.assemblyLine')}
               </p>
 
               <div className="mt-3.5 pt-2.5 border-t border-black/5 text-xs space-y-1">
                 <div className="flex justify-between">
-                  <span className="text-slate-500 font-medium">Hub Stock:</span>
-                  <span className="font-mono text-black font-extrabold">480 units</span>
+                  <span className="text-slate-500 font-medium">{t('drp.network.hubStock')}</span>
+                  <span className="font-mono text-black font-extrabold">480 {t('sop.kpi.units')}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-slate-500 font-medium">Safety Buffer:</span>
-                  <span className="font-mono text-slate-700 font-bold">180 units</span>
+                  <span className="text-slate-500 font-medium">{t('drp.network.safetyBuffer')}</span>
+                  <span className="font-mono text-slate-700 font-bold">180 {t('sop.kpi.units')}</span>
                 </div>
               </div>
             </div>
@@ -194,7 +196,7 @@ export const DRPModule: React.FC<DRPModuleProps> = ({
                         {depot.type}
                       </span>
                       <span className="text-[9px] font-mono font-bold text-emerald-900 bg-[#7AFFA1]/50 px-2 py-0.5 rounded-full">
-                        Lead: {depot.transitLeadTimeDays}d
+                        {t('drp.network.leadPrefix')} {depot.transitLeadTimeDays}d
                       </span>
                     </div>
 
@@ -207,8 +209,8 @@ export const DRPModule: React.FC<DRPModuleProps> = ({
                     </div>
 
                     <div className="mt-2.5 pt-2 border-t border-black/5 flex items-center justify-between text-xs">
-                      <span className="text-slate-500 font-medium">On-Hand:</span>
-                      <span className="font-mono font-bold text-black">{depot.currentInventory} units</span>
+                      <span className="text-slate-500 font-medium">{t('drp.network.onHand')}</span>
+                      <span className="font-mono font-bold text-black">{depot.currentInventory} {t('sop.kpi.units')}</span>
                     </div>
                   </div>
                 );
@@ -223,14 +225,14 @@ export const DRPModule: React.FC<DRPModuleProps> = ({
         <div className="px-5 py-4 border-b border-black/5 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div>
             <h3 className="text-base font-extrabold text-black">
-              Time-Phased Distribution Replenishment Matrix
+              {t('drp.matrix.title')}
             </h3>
             <p className="text-xs text-slate-500 mt-0.5 font-medium">
-              Regional depot gross demand, transit pipelines, and planned factory dispatches
+              {t('drp.matrix.subtitle')}
             </p>
           </div>
           <span className="text-xs font-bold text-slate-600 bg-white/70 px-3 py-1 rounded-full border border-white/80">
-            Planning Horizon: Weeks 40 - 47
+            {t('drp.matrix.horizon')}
           </span>
         </div>
 
@@ -239,7 +241,7 @@ export const DRPModule: React.FC<DRPModuleProps> = ({
             <thead className="bg-white/30 text-slate-400 font-mono text-[11px] uppercase border-b border-black/5">
               <tr>
                 <th className="py-2.5 px-5 font-bold min-w-[220px]">
-                  Depot Node / Planning Row
+                  {t('drp.matrix.column')}
                 </th>
                 {rows[0]?.periods.map((p) => (
                   <th key={p.week} className="py-2.5 px-4 text-right font-bold min-w-[85px]">
@@ -267,14 +269,14 @@ export const DRPModule: React.FC<DRPModuleProps> = ({
                         <span>{row.depotName}</span>
                         <span className="text-slate-400 font-normal">|</span>
                         <span className="text-[11px] font-mono text-slate-500 font-normal">
-                          Initial On-Hand: {currentStock} units · Safety Buffer: {safetyTarget} units · Lead Time: {leadTime} days
+                          {t('drp.matrix.initialOnHand', { stock: currentStock, safety: safetyTarget, lead: leadTime })}
                         </span>
                       </td>
                     </tr>
 
                     {/* Gross Requirements */}
                     <tr className="hover:bg-white/50 transition-colors">
-                      <td className="py-2 px-5 font-medium text-slate-600 pl-8">Gross Requirements (Demand)</td>
+                      <td className="py-2 px-5 font-medium text-slate-600 pl-8">{t('drp.matrix.grossRequirements')}</td>
                       {row.periods.map((p) => (
                         <td key={p.week} className="py-2 px-4 text-right font-mono tabular-nums text-slate-600">
                           {p.grossRequirement}
@@ -284,7 +286,7 @@ export const DRPModule: React.FC<DRPModuleProps> = ({
 
                     {/* Scheduled Receipts */}
                     <tr className="hover:bg-white/50 transition-colors">
-                      <td className="py-2 px-5 font-medium text-slate-600 pl-8">Scheduled In-Transit Receipts</td>
+                      <td className="py-2 px-5 font-medium text-slate-600 pl-8">{t('drp.matrix.scheduledReceipts')}</td>
                       {row.periods.map((p) => (
                         <td key={p.week} className="py-2 px-4 text-right font-mono tabular-nums text-slate-500">
                           {p.scheduledReceipts > 0 ? `+${p.scheduledReceipts}` : '-'}
@@ -294,7 +296,7 @@ export const DRPModule: React.FC<DRPModuleProps> = ({
 
                     {/* Projected On Hand */}
                     <tr className="hover:bg-white/50 transition-colors bg-white/20">
-                      <td className="py-2 px-5 font-bold text-black pl-8">Projected Available Balance (PAB)</td>
+                      <td className="py-2 px-5 font-bold text-black pl-8">{t('drp.matrix.projectedOnHand')}</td>
                       {row.periods.map((p) => (
                         <td
                           key={p.week}
@@ -309,7 +311,7 @@ export const DRPModule: React.FC<DRPModuleProps> = ({
 
                   {/* Net Requirement */}
                   <tr className="hover:bg-white/50 transition-colors">
-                    <td className="py-2 px-5 font-medium text-slate-600 pl-8">Net Requirements</td>
+                    <td className="py-2 px-5 font-medium text-slate-600 pl-8">{t('drp.matrix.netRequirement')}</td>
                     {row.periods.map((p) => (
                       <td key={p.week} className="py-2 px-4 text-right font-mono tabular-nums text-slate-400">
                         {p.netRequirement > 0 ? p.netRequirement : '-'}
@@ -321,9 +323,9 @@ export const DRPModule: React.FC<DRPModuleProps> = ({
                   <tr className="bg-[#fffde3]/40 font-bold hover:bg-[#fffde3]/60 transition-colors">
                     <td className="py-2.5 px-5 text-black pl-8">
                       <div className="flex items-center justify-between gap-2">
-                        <span>Planned Order Release (Factory Dispatch)</span>
+                        <span>{t('drp.matrix.plannedOrderRelease')}</span>
                         <span className="text-[9px] bg-[#FFF87C] text-black px-2 py-0.5 rounded-full shadow-2xs font-extrabold shrink-0">
-                          MPS Demand
+                          {t('drp.matrix.mpsDemand')}
                         </span>
                       </div>
                     </td>
@@ -348,7 +350,7 @@ export const DRPModule: React.FC<DRPModuleProps> = ({
                 <td className="py-3 px-5 text-xs">
                   <div className="flex items-center gap-2">
                     <span className="w-2 h-2 rounded-full bg-[#7AFFA1] shrink-0"></span>
-                    <span className="font-black">TOTAL DRP PLANNED ORDERS RELEASED (AGGREGATE MPS DEMAND)</span>
+                    <span className="font-black">{t('drp.matrix.totalRow')}</span>
                   </div>
                 </td>
                 {rows[0]?.periods.map((_, idx) => (
@@ -369,7 +371,7 @@ export const DRPModule: React.FC<DRPModuleProps> = ({
             <div className="flex items-center justify-between">
               <h3 className="text-base font-black text-black flex items-center gap-2">
                 <ArrowRightLeft className="w-4 h-4 text-slate-700" />
-                <span>Inter-Depot Inventory Transfer</span>
+                <span>{t('drp.transferModal.title')}</span>
               </h3>
               <button
                 onClick={() => setTransferModalOpen(false)}
@@ -380,12 +382,12 @@ export const DRPModule: React.FC<DRPModuleProps> = ({
             </div>
 
             <p className="text-xs text-slate-600 font-medium">
-              Rebalance stock directly between regional distribution centers to avoid factory expedited production runs.
+              {t('drp.transferModal.description')}
             </p>
 
             <div className="space-y-3 text-xs">
               <div>
-                <label className="block font-bold text-slate-700 mb-1">Source Depot (Ship From):</label>
+                <label className="block font-bold text-slate-700 mb-1">{t('drp.transferModal.source')}</label>
                 <select
                   value={transferSource}
                   onChange={(e) => setTransferSource(e.target.value)}
@@ -398,7 +400,7 @@ export const DRPModule: React.FC<DRPModuleProps> = ({
               </div>
 
               <div>
-                <label className="block font-bold text-slate-700 mb-1">Target Depot (Receive At):</label>
+                <label className="block font-bold text-slate-700 mb-1">{t('drp.transferModal.target')}</label>
                 <select
                   value={transferTarget}
                   onChange={(e) => setTransferTarget(e.target.value)}
@@ -411,7 +413,7 @@ export const DRPModule: React.FC<DRPModuleProps> = ({
               </div>
 
               <div>
-                <label className="block font-bold text-slate-700 mb-1">Transfer Quantity (Units):</label>
+                <label className="block font-bold text-slate-700 mb-1">{t('drp.transferModal.quantity')}</label>
                 <input
                   type="number"
                   value={transferQty}
@@ -426,13 +428,13 @@ export const DRPModule: React.FC<DRPModuleProps> = ({
                 onClick={() => setTransferModalOpen(false)}
                 className="px-4 py-2 rounded-full text-xs font-bold text-slate-600 hover:text-black glass-pill cursor-pointer"
               >
-                Cancel
+                {t('drp.transferModal.cancel')}
               </button>
               <button
                 onClick={handleExecuteTransfer}
                 className="px-5 py-2 rounded-full text-xs font-bold text-white bg-slate-950 hover:bg-black transition-all cursor-pointer shadow-sm"
               >
-                Dispatch In-Transit Transfer
+                {t('drp.transferModal.dispatch')}
               </button>
             </div>
           </div>

@@ -8,6 +8,7 @@ import {
   Cpu,
   Boxes,
 } from 'lucide-react';
+import { useTranslation } from '../i18n/i18n';
 
 interface SidebarProps {
   currentStep: ProcessStep;
@@ -34,6 +35,8 @@ export const Sidebar: React.FC<SidebarProps> = ({
   mrpPendingCount,
   onOpenScenarioModal,
 }) => {
+  const { t } = useTranslation();
+
   const navItems: {
     id: ProcessStep;
     stepNumber: string;
@@ -47,54 +50,54 @@ export const Sidebar: React.FC<SidebarProps> = ({
       id: 'process_map',
       stepNumber: '00',
       code: 'FLOW',
-      name: 'Flow & Dashboard',
+      name: t('common.sidebar.nav.process_map.name'),
       icon: LayoutGrid,
-      badge: 'Global',
+      badge: t('common.sidebar.nav.process_map.badge'),
       badgeBg: 'bg-[#DDCBF5]',
     },
     {
       id: 'sop',
       stepNumber: '01',
       code: 'S&OP',
-      name: 'Sales & Ops',
+      name: t('common.sidebar.nav.sop.name'),
       icon: BarChart3,
-      badge: sopStatus === 'Approved' ? 'Approved' : 'Draft',
+      badge: sopStatus === 'Approved' ? t('common.sidebar.badges.approved') : t('common.sidebar.badges.draft'),
       badgeBg: sopStatus === 'Approved' ? 'bg-[#7AFFA1]' : 'bg-[#FFF87C]',
     },
     {
       id: 'drp',
       stepNumber: '02',
       code: 'DRP',
-      name: 'Distribution',
+      name: t('common.sidebar.nav.drp.name'),
       icon: Truck,
-      badge: 'Balanced',
+      badge: t('common.sidebar.badges.balanced'),
       badgeBg: 'bg-[#FFF87C]',
     },
     {
       id: 'mps',
       stepNumber: '03',
       code: 'MPS',
-      name: 'Master Build',
+      name: t('common.sidebar.nav.mps.name'),
       icon: CalendarRange,
-      badge: 'Locked',
+      badge: t('common.sidebar.badges.locked'),
       badgeBg: 'bg-[#7AFFA1]',
     },
     {
       id: 'crp',
       stepNumber: '04',
       code: 'CRP',
-      name: 'Capacity Load',
+      name: t('common.sidebar.nav.crp.name'),
       icon: Cpu,
-      badge: crpStatus.includes('Bottleneck') ? 'Alert' : 'Feasible',
+      badge: crpStatus.includes('Bottleneck') ? t('common.sidebar.badges.alert') : t('common.sidebar.badges.feasible'),
       badgeBg: crpStatus.includes('Bottleneck') ? 'bg-[#FFA27D]' : 'bg-[#7AFFA1]',
     },
     {
       id: 'mrp',
       stepNumber: '05',
       code: 'MRP',
-      name: 'BOM Ledger',
+      name: t('common.sidebar.nav.mrp.name'),
       icon: Boxes,
-      badge: `${mrpPendingCount} Orders`,
+      badge: t('common.sidebar.nav.mrp.badge', { count: mrpPendingCount }),
       badgeBg: 'bg-[#DDCBF5]',
     },
   ];
@@ -121,7 +124,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                 Tessaris
               </span>
               <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider mt-0.5">
-                Operations Suite
+                {t('common.sidebar.operationsSuite')}
               </span>
             </div>
           </div>
@@ -137,10 +140,10 @@ export const Sidebar: React.FC<SidebarProps> = ({
             <div className="w-2.5 h-2.5 rounded-full bg-[#7AFFA1] animate-pulse shrink-0"></div>
             <div className="min-w-0">
               <div className="text-xs font-black text-slate-900 leading-tight truncate">
-                Detroit Hub Plant
+                {t('common.sidebar.plantName')}
               </div>
               <div className="text-[10px] text-slate-500 font-semibold truncate">
-                CDC · 3 Regional Depots
+                {t('common.sidebar.plantSubtitle')}
               </div>
             </div>
           </div>
@@ -152,7 +155,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
         {/* Navigation Section */}
         <div className="space-y-1">
           <div className="px-3 pb-1 text-[10px] font-extrabold uppercase tracking-wider text-slate-400">
-            Planning Stages
+            {t('common.sidebar.planningStages')}
           </div>
 
           <nav className="space-y-1.5">
@@ -191,7 +194,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                         </span>
                       </div>
                       <div className="text-[10px] text-slate-400 font-mono mt-0.5 truncate">
-                        Stage {item.stepNumber}
+                        {t('common.sidebar.stage', { num: item.stepNumber })}
                       </div>
                     </div>
                   </div>
@@ -220,16 +223,16 @@ export const Sidebar: React.FC<SidebarProps> = ({
         >
           <div className="flex items-center justify-between text-xs">
             <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">
-              Planning Scenario
+              {t('common.sidebar.planningScenario')}
             </span>
             <span className="text-[10px] font-bold text-slate-500 group-hover:text-black">
-              Switch →
+              {t('common.sidebar.switch')}
             </span>
           </div>
           <div className="flex items-center gap-2 mt-1">
             <div className="w-2 h-2 rounded-full bg-[#FFF87C] shrink-0"></div>
             <span className="text-xs font-black text-slate-900 capitalize truncate">
-              {scenario} Plan
+              {t(`common.scenarios.${scenario}`)} {t('common.sidebar.plan')}
             </span>
           </div>
         </div>
@@ -239,19 +242,19 @@ export const Sidebar: React.FC<SidebarProps> = ({
           <div className="flex items-center gap-2 min-w-0">
             <div className="w-7 h-7 rounded-full bg-gradient-to-tr from-[#FFA27D] to-[#FFF87C] p-0.5 shadow-2xs shrink-0">
               <div className="w-full h-full rounded-full bg-white flex items-center justify-center font-black text-[11px] text-slate-900">
-                SJ
+                RS
               </div>
             </div>
             <div className="min-w-0">
               <div className="text-xs font-black text-slate-900 leading-tight truncate">
-                Richard St. Jean
+                {t('common.sidebar.userName')}
               </div>
               <div className="text-[9px] text-slate-500 font-medium truncate">
-                Master Planner
+                {t('common.sidebar.userRole')}
               </div>
             </div>
           </div>
-          <div className="w-2 h-2 rounded-full bg-[#7AFFA1] shrink-0" title="Connected to ERP"></div>
+          <div className="w-2 h-2 rounded-full bg-[#7AFFA1] shrink-0" title={t('common.sidebar.erpConnected')}></div>
         </div>
       </div>
     </aside>

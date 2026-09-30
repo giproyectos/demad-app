@@ -7,6 +7,7 @@ import {
   Clock,
   Zap,
 } from 'lucide-react';
+import { useTranslation } from '../../i18n/i18n';
 
 interface CRPModuleProps {
   workCenters: WorkCenterCRP[];
@@ -19,6 +20,7 @@ export const CRPModule: React.FC<CRPModuleProps> = ({
   onUpdateWorkCenters,
   onPromoteToMRP,
 }) => {
+  const { t } = useTranslation();
   const [selectedCenterId, setSelectedCenterId] = useState<string>(workCenters[0]?.workCenter.id || 'wc-101');
   const [mitigationLog, setMitigationLog] = useState<string | null>(null);
 
@@ -57,7 +59,7 @@ export const CRPModule: React.FC<CRPModuleProps> = ({
     });
 
     onUpdateWorkCenters(updated);
-    setMitigationLog(`Weekend Overtime (+16h) authorized for ${workCenter.name}. Peak load reduced under 100%.`);
+    setMitigationLog(t('crp.overtimeNotice', { name: workCenter.name }));
     setTimeout(() => setMitigationLog(null), 5000);
   };
 
@@ -89,7 +91,7 @@ export const CRPModule: React.FC<CRPModuleProps> = ({
     });
 
     onUpdateWorkCenters(updated);
-    setMitigationLog(`Rerouted 24 machine hours to Secondary Line 02. Bottleneck resolved.`);
+    setMitigationLog(t('crp.reroutingNotice'));
     setTimeout(() => setMitigationLog(null), 5000);
   };
 
@@ -100,15 +102,15 @@ export const CRPModule: React.FC<CRPModuleProps> = ({
         <div>
           <div className="flex items-center gap-2 text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">
             <span className="w-2 h-2 rounded-full bg-[#FFA27D]"></span>
-            <span className="text-black font-extrabold">Stage 04</span>
+            <span className="text-black font-extrabold">{t('crp.stage')}</span>
             <span className="text-slate-300">·</span>
-            <span>Finite Machine Capacity & Line Balancing</span>
+            <span>{t('crp.horizonLabel')}</span>
           </div>
           <h1 className="text-xl sm:text-2xl font-black tracking-tight text-slate-950 flex flex-wrap items-center gap-3">
-            <span>Capacity Requirements Planning (CRP)</span>
+            <span>{t('crp.title')}</span>
           </h1>
           <p className="text-xs text-slate-500 mt-0.5 font-medium">
-            Test machine hours, tooling, and labor shifts against the master schedule to eliminate plant bottlenecks.
+            {t('crp.subtitle')}
           </p>
         </div>
 
@@ -117,7 +119,7 @@ export const CRPModule: React.FC<CRPModuleProps> = ({
             onClick={onPromoteToMRP}
             className="px-4 py-2 text-xs font-bold text-white bg-slate-950 hover:bg-black rounded-full flex items-center gap-1.5 transition-all cursor-pointer shadow-sm active:scale-95"
           >
-            <span>Explode MRP Ledger</span>
+            <span>{t('crp.explodeMrp')}</span>
             <ArrowRight className="w-3.5 h-3.5 text-[#7AFFA1]" />
           </button>
         </div>
@@ -159,7 +161,7 @@ export const CRPModule: React.FC<CRPModuleProps> = ({
                       : 'bg-[#7AFFA1] text-black'
                   }`}
                 >
-                  {maxUtil}% Max
+                  {maxUtil}% {t('crp.tabs.max')}
                 </span>
               </div>
 
@@ -167,17 +169,17 @@ export const CRPModule: React.FC<CRPModuleProps> = ({
                 {wcItem.workCenter.name}
               </div>
               <div className="text-[11px] text-slate-500 font-medium truncate mt-0.5">
-                {wcItem.workCenter.department} · {wcItem.workCenter.standardWeeklyHours}h Std
+                {wcItem.workCenter.department} · {wcItem.workCenter.standardWeeklyHours}h {t('crp.tabs.std')}
               </div>
 
               <div className="mt-2.5 pt-2 border-t border-black/5 flex items-center justify-between text-[11px]">
-                <span className="text-slate-500">Status:</span>
+                <span className="text-slate-500">{t('crp.tabs.status')}</span>
                 <span
                   className={`font-bold ${
                     maxUtil > 100 ? 'text-[#FFA27D]' : 'text-emerald-800'
                   }`}
                 >
-                  {maxUtil > 100 ? 'Bottleneck' : 'Feasible'}
+                  {maxUtil > 100 ? t('crp.status.Bottleneck') : t('crp.status.Feasible')}
                 </span>
               </div>
             </button>
@@ -189,18 +191,18 @@ export const CRPModule: React.FC<CRPModuleProps> = ({
       <div className="glass-panel rounded-3xl p-5 flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <div className="flex items-center gap-2 text-xs font-bold text-slate-500">
-            <span>Work Center Focus:</span>
+            <span>{t('crp.focus.label')}</span>
             <span className="font-mono text-black font-extrabold">{workCenter.code}</span>
             <span className="text-slate-300">·</span>
             <span className="text-black font-semibold">{workCenter.name}</span>
           </div>
 
           <div className="flex items-center gap-3 mt-1.5 text-xs text-slate-600 font-medium flex-wrap">
-            <span>Standard Cap: <strong className="text-black font-mono">{workCenter.standardWeeklyHours} hrs/wk</strong></span>
+            <span>{t('crp.focus.standardCap')} <strong className="text-black font-mono">{workCenter.standardWeeklyHours} {t('crp.focus.hrsPerWk')}</strong></span>
             <span className="text-slate-300">·</span>
-            <span>Overtime: <strong className="text-black font-mono">+{workCenter.currentOvertimeAuthorized} hrs</strong></span>
+            <span>{t('crp.focus.overtime')} <strong className="text-black font-mono">+{workCenter.currentOvertimeAuthorized} {t('crp.focus.hrs')}</strong></span>
             <span className="text-slate-300">·</span>
-            <span>Efficiency: <strong className="text-black font-mono">{(workCenter.efficiencyRating * 100).toFixed(0)}%</strong></span>
+            <span>{t('crp.focus.efficiency')} <strong className="text-black font-mono">{(workCenter.efficiencyRating * 100).toFixed(0)}%</strong></span>
           </div>
         </div>
 
@@ -209,7 +211,7 @@ export const CRPModule: React.FC<CRPModuleProps> = ({
           {bottleneckWeeks.length > 0 && (
             <div className="flex items-center gap-1.5 text-xs font-bold text-black bg-[#FFA27D]/35 px-3 py-1.5 rounded-full border border-[#FFA27D]/50">
               <AlertTriangle className="w-3.5 h-3.5 text-black" />
-              <span>{bottleneckWeeks.length} Overload Week(s)</span>
+              <span>{t('crp.actions.overloadWeeks', { count: bottleneckWeeks.length })}</span>
             </div>
           )}
 
@@ -218,7 +220,7 @@ export const CRPModule: React.FC<CRPModuleProps> = ({
             className="px-3.5 py-1.5 text-xs font-bold text-black bg-[#FFF87C] hover:opacity-90 rounded-full flex items-center gap-1.5 transition-all cursor-pointer shadow-2xs"
           >
             <Clock className="w-3.5 h-3.5" />
-            <span>Add Overtime (+16h)</span>
+            <span>{t('crp.actions.addOvertime')}</span>
           </button>
 
           <button
@@ -226,7 +228,7 @@ export const CRPModule: React.FC<CRPModuleProps> = ({
             className="px-3.5 py-1.5 text-xs font-bold text-black glass-pill hover:bg-white rounded-full flex items-center gap-1.5 transition-all cursor-pointer"
           >
             <Zap className="w-3.5 h-3.5" />
-            <span>Alternate Routing (-24h)</span>
+            <span>{t('crp.actions.alternateRouting')}</span>
           </button>
         </div>
       </div>
@@ -236,14 +238,14 @@ export const CRPModule: React.FC<CRPModuleProps> = ({
         <div className="px-5 py-4 border-b border-black/5 flex items-center justify-between">
           <div>
             <h3 className="text-base font-extrabold text-black">
-              Finite Machine Load Profile & Utilization Matrix
+              {t('crp.chart.title')}
             </h3>
             <p className="text-xs text-slate-500 mt-0.5 font-medium">
-              Time-phased required setup + run hours vs demonstrated work center capacity
+              {t('crp.chart.subtitle')}
             </p>
           </div>
           <span className="text-xs font-mono font-bold text-slate-500">
-            Efficiency Rating: {(workCenter.efficiencyRating * 100).toFixed(0)}%
+            {t('crp.chart.efficiencyRating')} {(workCenter.efficiencyRating * 100).toFixed(0)}%
           </span>
         </div>
 
@@ -263,14 +265,14 @@ export const CRPModule: React.FC<CRPModuleProps> = ({
                     <div
                       style={{ bottom: `${capHeight}%` }}
                       className="absolute left-1 right-1 border-b-2 border-dashed border-slate-400 z-10 pointer-events-none"
-                      title={`Effective Capacity: ${period.effectiveCapacityHours}h`}
+                      title={t('crp.chart.tooltipEffectiveCapacity', { hours: period.effectiveCapacityHours })}
                     ></div>
 
                     {/* Capacity Bar */}
                     <div
                       style={{ height: `${capHeight}%` }}
                       className="w-4 bg-slate-200/80 rounded-t-lg transition-all"
-                      title={`Capacity: ${period.effectiveCapacityHours}h`}
+                      title={t('crp.chart.tooltipCapacity', { hours: period.effectiveCapacityHours })}
                     ></div>
 
                     {/* Load Bar */}
@@ -279,7 +281,7 @@ export const CRPModule: React.FC<CRPModuleProps> = ({
                       className={`w-4 rounded-t-lg transition-all ${
                         isOver ? 'bg-[#FFA27D]' : 'bg-[#7AFFA1]'
                       }`}
-                      title={`Load: ${period.mpsPlannedLoadHours}h (${period.utilizationPct}%)`}
+                      title={t('crp.chart.tooltipLoad', { hours: period.mpsPlannedLoadHours, pct: period.utilizationPct })}
                     ></div>
                   </div>
 
@@ -304,7 +306,7 @@ export const CRPModule: React.FC<CRPModuleProps> = ({
           <table className="w-full text-xs text-left">
             <thead className="bg-white/30 text-slate-400 font-mono text-[11px] uppercase border-b border-black/5">
               <tr>
-                <th className="py-2.5 px-5 font-bold min-w-[220px]">Capacity Element</th>
+                <th className="py-2.5 px-5 font-bold min-w-[220px]">{t('crp.table.column')}</th>
                 {loadByWeek.map((l) => (
                   <th key={l.week} className="py-2.5 px-4 text-right font-bold min-w-[85px]">{l.week}</th>
                 ))}
@@ -312,7 +314,7 @@ export const CRPModule: React.FC<CRPModuleProps> = ({
             </thead>
             <tbody className="divide-y divide-black/5 text-slate-700">
               <tr className="hover:bg-white/50 transition-colors">
-                <td className="py-2.5 px-5 font-medium text-slate-600">Standard Setup Hours</td>
+                <td className="py-2.5 px-5 font-medium text-slate-600">{t('crp.table.setupHours')}</td>
                 {loadByWeek.map((l) => (
                   <td key={l.week} className="py-2.5 px-4 text-right font-mono tabular-nums text-slate-500">
                     {l.setupHours}h
@@ -321,7 +323,7 @@ export const CRPModule: React.FC<CRPModuleProps> = ({
               </tr>
 
               <tr className="hover:bg-white/50 transition-colors">
-                <td className="py-2.5 px-5 font-medium text-slate-600">Production Run Hours</td>
+                <td className="py-2.5 px-5 font-medium text-slate-600">{t('crp.table.runHours')}</td>
                 {loadByWeek.map((l) => (
                   <td key={l.week} className="py-2.5 px-4 text-right font-mono tabular-nums text-slate-500">
                     {l.runHours}h
@@ -331,7 +333,7 @@ export const CRPModule: React.FC<CRPModuleProps> = ({
 
               <tr className="hover:bg-white/50 transition-colors bg-white/20">
                 <td className="py-2.5 px-5 font-bold text-black">
-                  Total Planned MPS Load
+                  {t('crp.table.totalLoad')}
                 </td>
                 {loadByWeek.map((l) => (
                   <td key={l.week} className="py-2.5 px-4 text-right font-mono tabular-nums font-bold text-black">
@@ -341,7 +343,7 @@ export const CRPModule: React.FC<CRPModuleProps> = ({
               </tr>
 
               <tr className="hover:bg-white/50 transition-colors">
-                <td className="py-2.5 px-5 font-medium text-slate-600">Demonstrated Effective Capacity</td>
+                <td className="py-2.5 px-5 font-medium text-slate-600">{t('crp.table.effectiveCapacity')}</td>
                 {loadByWeek.map((l) => (
                   <td key={l.week} className="py-2.5 px-4 text-right font-mono tabular-nums text-slate-600 font-semibold">
                     {l.effectiveCapacityHours}h
@@ -352,9 +354,9 @@ export const CRPModule: React.FC<CRPModuleProps> = ({
               <tr className="bg-[#fffde3]/40 font-bold hover:bg-[#fffde3]/60 transition-colors">
                 <td className="py-3 px-5 text-black">
                   <div className="flex items-center justify-between gap-2">
-                    <span>Capacity Utilization Pct</span>
+                    <span>{t('crp.table.utilizationPct')}</span>
                     <span className="text-[9px] bg-[#FFF87C] text-black px-2 py-0.5 rounded-full shadow-2xs font-extrabold shrink-0">
-                      Target &le; 100%
+                      {t('crp.table.target')}
                     </span>
                   </div>
                 </td>

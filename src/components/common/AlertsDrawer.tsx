@@ -1,6 +1,7 @@
 import React from 'react';
 import { AlertTriangle, ShieldCheck, Clock, X, ArrowRight, Zap, CheckCircle2, Truck, Cpu, Boxes } from 'lucide-react';
 import { ProcessStep } from '../../types/demand';
+import { useTranslation } from '../../i18n/i18n';
 
 interface AlertsDrawerProps {
   isOpen: boolean;
@@ -13,7 +14,7 @@ interface AlertsDrawerProps {
 export interface OperationalAlert {
   id: string;
   severity: 'critical' | 'warning' | 'info';
-  category: 'CRP Capacity' | 'MRP Shortage' | 'DRP Buffer' | 'S&OP Gap';
+  category: string;
   title: string;
   description: string;
   stage: ProcessStep;
@@ -30,17 +31,18 @@ export const AlertsDrawer: React.FC<AlertsDrawerProps> = ({
   onResolveBottleneck,
   onResolveShortage,
 }) => {
+  const { t } = useTranslation();
   if (!isOpen) return null;
 
   const alerts: OperationalAlert[] = [
     {
       id: 'al-crp-1',
       severity: 'critical',
-      category: 'CRP Capacity',
-      title: 'Machine Cell WC-101 Exceeds Rated Capacity (115.7%)',
-      description: 'Week 42 load requires 174 hours vs 150.4 effective hours limit. 23.6 machine hours bottleneck.',
+      category: t('modals.alerts.items.crpCategory'),
+      title: t('modals.alerts.items.crpTitle'),
+      description: t('modals.alerts.items.crpDescription'),
       stage: 'crp',
-      actionLabel: 'Authorize Weekend Overtime (+16h)',
+      actionLabel: t('modals.alerts.items.crpAction'),
       accentBg: 'bg-[#ffefe8]',
       accentPill: 'bg-[#FFA27D]',
       actionFn: onResolveBottleneck,
@@ -48,11 +50,11 @@ export const AlertsDrawer: React.FC<AlertsDrawerProps> = ({
     {
       id: 'al-mrp-1',
       severity: 'critical',
-      category: 'MRP Shortage',
-      title: 'Projected Stockout: Silicon Carbide MOSFET (W44)',
-      description: 'Projected available stock dips to -80 units. Inverter assembly line SD-120P at risk of line-stop.',
+      category: t('modals.alerts.items.mrpCategory'),
+      title: t('modals.alerts.items.mrpTitle'),
+      description: t('modals.alerts.items.mrpDescription'),
       stage: 'mrp',
-      actionLabel: 'Expedite PO #8892 by 1 Week',
+      actionLabel: t('modals.alerts.items.mrpAction'),
       accentBg: 'bg-[#ffefe8]',
       accentPill: 'bg-[#FFA27D]',
       actionFn: onResolveShortage,
@@ -60,11 +62,11 @@ export const AlertsDrawer: React.FC<AlertsDrawerProps> = ({
     {
       id: 'al-drp-1',
       severity: 'warning',
-      category: 'DRP Buffer',
-      title: 'Pacific West Coast Hub Below Safety Stock Target',
-      description: 'Current on-hand (75 units) is under the 120-unit buffer threshold due to unexpected coastal distributor pull.',
+      category: t('modals.alerts.items.drpCategory'),
+      title: t('modals.alerts.items.drpTitle'),
+      description: t('modals.alerts.items.drpDescription'),
       stage: 'drp',
-      actionLabel: 'Rebalance from East Coast Depot',
+      actionLabel: t('modals.alerts.items.drpAction'),
       accentBg: 'bg-[#fffde3]',
       accentPill: 'bg-[#FFF87C]',
       actionFn: () => onNavigate('drp'),
@@ -72,11 +74,11 @@ export const AlertsDrawer: React.FC<AlertsDrawerProps> = ({
     {
       id: 'al-sop-1',
       severity: 'info',
-      category: 'S&OP Gap',
-      title: 'Robotics Control Family Consensus Review Pending',
-      description: 'Q4 commercial uplift proposal (+12%) requires operations sign-off for aggregate line capacity.',
+      category: t('modals.alerts.items.sopCategory'),
+      title: t('modals.alerts.items.sopTitle'),
+      description: t('modals.alerts.items.sopDescription'),
       stage: 'sop',
-      actionLabel: 'Review S&OP Plan',
+      actionLabel: t('modals.alerts.items.sopAction'),
       accentBg: 'bg-[#dbfced]',
       accentPill: 'bg-[#7AFFA1]',
       actionFn: () => onNavigate('sop'),
@@ -93,9 +95,9 @@ export const AlertsDrawer: React.FC<AlertsDrawerProps> = ({
               <AlertTriangle className="w-4.5 h-4.5" />
             </div>
             <div>
-              <h2 className="text-sm font-black text-slate-900">Exceptions & Alerts Monitor</h2>
+              <h2 className="text-sm font-black text-slate-900">{t('modals.alerts.title')}</h2>
               <p className="text-xs text-slate-500 font-medium">
-                {alerts.length} operational items requiring intervention
+                {t('modals.alerts.count', { count: alerts.length })}
               </p>
             </div>
           </div>
@@ -121,7 +123,7 @@ export const AlertsDrawer: React.FC<AlertsDrawerProps> = ({
                 <span
                   className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${alert.accentPill} text-black`}
                 >
-                  {alert.severity.toUpperCase()}
+                  {t(`modals.alerts.severity.${alert.severity}`)}
                 </span>
               </div>
 
@@ -151,7 +153,7 @@ export const AlertsDrawer: React.FC<AlertsDrawerProps> = ({
                   }}
                   className="text-xs text-slate-600 hover:text-black font-bold flex items-center gap-1 transition-colors cursor-pointer"
                 >
-                  <span>Stage</span>
+                  <span>{t('modals.alerts.stage')}</span>
                   <ArrowRight className="w-3.5 h-3.5" />
                 </button>
               </div>
@@ -163,13 +165,13 @@ export const AlertsDrawer: React.FC<AlertsDrawerProps> = ({
         <div className="p-5 bg-slate-50/80 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500 font-medium">
           <div className="flex items-center gap-2">
             <span className="w-2 h-2 rounded-full bg-[#7AFFA1]"></span>
-            <span>Closed-loop tracking active</span>
+            <span>{t('modals.alerts.closedLoopTracking')}</span>
           </div>
           <button
             onClick={onClose}
             className="px-3 py-1 text-slate-600 hover:text-black font-bold cursor-pointer"
           >
-            Dismiss
+            {t('modals.alerts.dismiss')}
           </button>
         </div>
       </div>

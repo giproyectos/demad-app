@@ -14,6 +14,7 @@ import {
   Sparkles,
   BarChart2,
 } from 'lucide-react';
+import { useTranslation } from '../../i18n/i18n';
 
 interface SOPModuleProps {
   families: ProductFamily[];
@@ -28,6 +29,7 @@ export const SOPModule: React.FC<SOPModuleProps> = ({
   onUpdatePlan,
   onPromoteToDRP,
 }) => {
+  const { t } = useTranslation();
   const [selectedFamilyId, setSelectedFamilyId] = useState<string>(families[0]?.id || 'fam-pmd');
   const [lastEditedCell, setLastEditedCell] = useState<string | null>(null);
 
@@ -100,12 +102,12 @@ export const SOPModule: React.FC<SOPModuleProps> = ({
         <div>
           <div className="flex items-center gap-2 text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">
             <span className="w-2 h-2 rounded-full bg-[#7AFFA1]"></span>
-            <span className="text-black font-extrabold">Stage 01</span>
+            <span className="text-black font-extrabold">{t('sop.stage')}</span>
             <span className="text-slate-300">·</span>
-            <span>Monthly Rolling Horizon</span>
+            <span>{t('sop.horizonLabel')}</span>
           </div>
           <h1 className="text-xl sm:text-2xl font-black tracking-tight text-slate-950 flex flex-wrap items-center gap-2.5">
-            <span>Sales & Operations Consensus (S&OP)</span>
+            <span>{t('sop.title')}</span>
             <span
               className={`text-[10px] font-extrabold px-2.5 py-0.5 rounded-full shrink-0 shadow-2xs ${
                 currentPlan.executiveStatus === 'Approved'
@@ -113,11 +115,11 @@ export const SOPModule: React.FC<SOPModuleProps> = ({
                   : 'bg-[#FFF87C] text-black'
               }`}
             >
-              {currentPlan.executiveStatus}
+              {t(`sop.status.${currentPlan.executiveStatus}`)}
             </span>
           </h1>
           <p className="text-xs text-slate-500 mt-0.5 font-medium">
-            Balance multi-channel demand with factory throughput over 6 rolling monthly periods.
+            {t('sop.subtitle')}
           </p>
         </div>
 
@@ -144,7 +146,7 @@ export const SOPModule: React.FC<SOPModuleProps> = ({
             onClick={onPromoteToDRP}
             className="px-4 py-2 text-xs font-bold text-white bg-slate-950 hover:bg-black rounded-full flex items-center gap-1.5 transition-all cursor-pointer shadow-sm active:scale-95 shrink-0"
           >
-            <span>Promote to DRP</span>
+            <span>{t('sop.promoteToDrp')}</span>
             <ArrowRight className="w-3.5 h-3.5 text-[#7AFFA1]" />
           </button>
         </div>
@@ -155,41 +157,41 @@ export const SOPModule: React.FC<SOPModuleProps> = ({
         {/* Card 1: Demand */}
         <div className="glass-card rounded-3xl p-4.5 space-y-1.5 border border-white/80">
           <div className="flex items-center justify-between text-xs font-bold text-slate-500">
-            <span>6-Month Demand</span>
+            <span>{t('sop.kpi.demand6mo')}</span>
             <div className="w-6 h-6 rounded-full bg-[#7AFFA1] flex items-center justify-center text-black shadow-2xs">
               <TrendingUp className="w-3.5 h-3.5" />
             </div>
           </div>
           <div className="text-2xl sm:text-3xl font-black text-black tracking-tight font-sans">
             {totalConsensus.toLocaleString()}{' '}
-            <span className="text-xs font-semibold text-slate-500">units</span>
+            <span className="text-xs font-semibold text-slate-500">{t('sop.kpi.units')}</span>
           </div>
           <div className="text-xs text-slate-500 font-medium">
-            Baseline: <strong className="text-black font-semibold">{currentPlan.periods.reduce((s, p) => s + p.statisticalForecast, 0).toLocaleString()}</strong>
+            {t('sop.kpi.baseline')} <strong className="text-black font-semibold">{currentPlan.periods.reduce((s, p) => s + p.statisticalForecast, 0).toLocaleString()}</strong>
           </div>
         </div>
 
         {/* Card 2: Plant Capacity */}
         <div className="glass-card rounded-3xl p-4.5 space-y-1.5 border border-white/80">
           <div className="flex items-center justify-between text-xs font-bold text-slate-500">
-            <span>Factory Ceiling</span>
+            <span>{t('sop.kpi.factoryCeiling')}</span>
             <div className="w-6 h-6 rounded-full bg-[#DDCBF5] flex items-center justify-center text-black shadow-2xs">
               <Layers className="w-3.5 h-3.5" />
             </div>
           </div>
           <div className="text-2xl sm:text-3xl font-black text-black tracking-tight font-sans">
             {totalCapacity.toLocaleString()}{' '}
-            <span className="text-xs font-semibold text-slate-500">units</span>
+            <span className="text-xs font-semibold text-slate-500">{t('sop.kpi.units')}</span>
           </div>
           <div className="text-xs text-slate-500 font-medium">
-            Plant Utilization: <strong className="text-black font-semibold">{avgUtilization}%</strong>
+            {t('sop.kpi.plantUtilization')} <strong className="text-black font-semibold">{avgUtilization}%</strong>
           </div>
         </div>
 
         {/* Card 3: Balance */}
         <div className="glass-card rounded-3xl p-4.5 space-y-1.5 border border-white/80">
           <div className="flex items-center justify-between text-xs font-bold text-slate-500">
-            <span>Net Gap Delta</span>
+            <span>{t('sop.kpi.netGapDelta')}</span>
             <div
               className={`w-6 h-6 rounded-full flex items-center justify-center text-black shadow-2xs ${
                 totalGap < 0 ? 'bg-[#FFA27D]' : 'bg-[#7AFFA1]'
@@ -200,17 +202,17 @@ export const SOPModule: React.FC<SOPModuleProps> = ({
           </div>
           <div className={`text-2xl sm:text-3xl font-black tracking-tight font-sans ${totalGap < 0 ? 'text-[#FFA27D]' : 'text-black'}`}>
             {totalGap > 0 ? `+${totalGap}` : totalGap}{' '}
-            <span className="text-xs font-semibold text-slate-500">units</span>
+            <span className="text-xs font-semibold text-slate-500">{t('sop.kpi.units')}</span>
           </div>
           <div className="text-xs text-slate-500 font-medium">
-            {totalGap < 0 ? 'Capacity deficit identified' : 'Surplus absorbs demand surges'}
+            {totalGap < 0 ? t('sop.kpi.deficit') : t('sop.kpi.surplus')}
           </div>
         </div>
 
         {/* Card 4: Revenue */}
         <div className="glass-card rounded-3xl p-4.5 space-y-1.5 border border-white/80">
           <div className="flex items-center justify-between text-xs font-bold text-slate-500">
-            <span>Projected Pipeline</span>
+            <span>{t('sop.kpi.projectedPipeline')}</span>
             <div className="w-6 h-6 rounded-full bg-[#FFF87C] flex items-center justify-center text-black shadow-2xs">
               <DollarSign className="w-3.5 h-3.5" />
             </div>
@@ -219,7 +221,7 @@ export const SOPModule: React.FC<SOPModuleProps> = ({
             ${(totalRevenue / 1000).toFixed(2)}M
           </div>
           <div className="text-xs text-slate-500 font-medium">
-            Target Margin: <strong className="text-black font-semibold">{currentPlan.consensusMarginPct}%</strong>
+            {t('sop.kpi.targetMargin')} <strong className="text-black font-semibold">{currentPlan.consensusMarginPct}%</strong>
           </div>
         </div>
       </div>
@@ -230,20 +232,20 @@ export const SOPModule: React.FC<SOPModuleProps> = ({
           <div>
             <h3 className="text-base font-extrabold text-black flex items-center gap-2">
               <BarChart2 className="w-4 h-4 text-slate-700" />
-              <span>Demand vs Demonstrated Capacity Profile</span>
+              <span>{t('sop.chart.title')}</span>
             </h3>
             <p className="text-xs text-slate-500 mt-0.5">
-              Monthly reconciliation of unconstrained consensus volume against factory threshold
+              {t('sop.chart.subtitle')}
             </p>
           </div>
           <div className="flex items-center gap-4 text-xs font-semibold">
             <div className="flex items-center gap-2">
               <span className="w-3 h-3 rounded-full bg-[#7AFFA1] shadow-2xs"></span>
-              <span className="text-slate-700">Consensus Demand</span>
+              <span className="text-slate-700">{t('sop.chart.consensusDemand')}</span>
             </div>
             <div className="flex items-center gap-2">
               <span className="w-3 h-3 rounded-full bg-[#DDCBF5] shadow-2xs"></span>
-              <span className="text-slate-700">Factory Ceiling</span>
+              <span className="text-slate-700">{t('sop.chart.factoryCeiling')}</span>
             </div>
           </div>
         </div>
@@ -291,11 +293,11 @@ export const SOPModule: React.FC<SOPModuleProps> = ({
                 </span>
                 {isDeficit ? (
                   <span className="mt-1 text-[9px] font-mono font-bold text-black bg-[#FFA27D] px-2 py-0.5 rounded-full">
-                    {p.gap} deficit
+                    {p.gap} {t('sop.chart.deficit')}
                   </span>
                 ) : (
                   <span className="mt-1 text-[9px] font-mono font-semibold text-emerald-900 bg-[#7AFFA1]/50 px-2 py-0.5 rounded-full">
-                    +{p.gap} surplus
+                    +{p.gap} {t('sop.chart.surplus')}
                   </span>
                 )}
               </div>
@@ -309,10 +311,10 @@ export const SOPModule: React.FC<SOPModuleProps> = ({
         <div className="px-5 py-4 border-b border-black/5 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div>
             <h2 className="text-base font-extrabold text-black">
-              S&OP Operational Consensus Ledger
+              {t('sop.ledger.title')}
             </h2>
             <p className="text-xs text-slate-500 mt-0.5 font-medium">
-              Click input cells to update commercial pipeline or marketing uplift in real time
+              {t('sop.ledger.subtitle')}
             </p>
           </div>
 
@@ -322,7 +324,7 @@ export const SOPModule: React.FC<SOPModuleProps> = ({
               className="px-3.5 py-1.5 rounded-full text-xs font-bold bg-[#FFF87C] text-black hover:opacity-90 transition-all cursor-pointer shadow-2xs flex items-center gap-1.5"
             >
               <Sparkles className="w-3.5 h-3.5" />
-              <span>+50 Campaign Lift</span>
+              <span>{t('sop.ledger.campaignLift')}</span>
             </button>
 
             <button
@@ -336,12 +338,12 @@ export const SOPModule: React.FC<SOPModuleProps> = ({
               {currentPlan.executiveStatus === 'Approved' ? (
                 <>
                   <Lock className="w-3.5 h-3.5 text-black" />
-                  <span>Approved</span>
+                  <span>{t('sop.ledger.approved')}</span>
                 </>
               ) : (
                 <>
                   <Unlock className="w-3.5 h-3.5 text-slate-500" />
-                  <span>Lock Consensus</span>
+                  <span>{t('sop.ledger.lockConsensus')}</span>
                 </>
               )}
             </button>
@@ -358,10 +360,10 @@ export const SOPModule: React.FC<SOPModuleProps> = ({
             >
               <span className="flex items-center gap-2">
                 {demandOpen ? <ChevronUp className="w-4 h-4 text-slate-500" /> : <ChevronDown className="w-4 h-4 text-slate-500" />}
-                <span>1. Unconstrained Demand Streams (Volume in Finished Units)</span>
+                <span>{t('sop.ledger.demandSection')}</span>
               </span>
               <span className="text-[11px] font-mono text-slate-500 font-semibold">
-                Total: {totalConsensus.toLocaleString()} units
+                {t('sop.ledger.total')} {totalConsensus.toLocaleString()} {t('sop.kpi.units')}
               </span>
             </button>
 
@@ -370,16 +372,16 @@ export const SOPModule: React.FC<SOPModuleProps> = ({
                 <table className="w-full text-left">
                   <thead className="bg-white/30 text-slate-400 font-mono text-[11px] uppercase border-b border-black/5">
                     <tr>
-                      <th className="py-2.5 px-5 font-bold min-w-[220px]">Stream / Plan Component</th>
+                      <th className="py-2.5 px-5 font-bold min-w-[220px]">{t('sop.ledger.column')}</th>
                       {currentPlan.periods.map((p) => (
                         <th key={p.period} className="py-2.5 px-4 text-right font-bold min-w-[90px]">{p.period}</th>
                       ))}
-                      <th className="py-2.5 px-5 text-right font-bold min-w-[100px]">Total</th>
+                      <th className="py-2.5 px-5 text-right font-bold min-w-[100px]">{t('sop.ledger.total')}</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-black/5 text-slate-700">
                     <tr className="hover:bg-white/50 transition-colors">
-                      <td className="py-2.5 px-5 font-medium">Statistical Forecast (AI Base)</td>
+                      <td className="py-2.5 px-5 font-medium">{t('sop.ledger.statisticalForecast')}</td>
                       {currentPlan.periods.map((p) => (
                         <td key={p.period} className="py-2.5 px-4 text-right font-mono tabular-nums text-slate-500">
                           {p.statisticalForecast.toLocaleString()}
@@ -393,8 +395,8 @@ export const SOPModule: React.FC<SOPModuleProps> = ({
                     <tr className="hover:bg-white/50 transition-colors bg-white/20">
                       <td className="py-2.5 px-5 font-bold text-black">
                         <div className="flex items-center justify-between gap-2">
-                          <span>Commercial Sales Forecast</span>
-                          <span className="text-[10px] text-slate-400 font-sans font-medium">editable</span>
+                          <span>{t('sop.ledger.salesForecast')}</span>
+                          <span className="text-[10px] text-slate-400 font-sans font-medium">{t('sop.ledger.editable')}</span>
                         </div>
                       </td>
                       {currentPlan.periods.map((p, idx) => (
@@ -417,8 +419,8 @@ export const SOPModule: React.FC<SOPModuleProps> = ({
                     <tr className="hover:bg-white/50 transition-colors">
                       <td className="py-2.5 px-5 font-bold text-black">
                         <div className="flex items-center justify-between gap-2">
-                          <span>Marketing Campaign Lift</span>
-                          <span className="text-[10px] text-slate-400 font-sans font-medium">editable</span>
+                          <span>{t('sop.ledger.marketingUplift')}</span>
+                          <span className="text-[10px] text-slate-400 font-sans font-medium">{t('sop.ledger.editable')}</span>
                         </div>
                       </td>
                       {currentPlan.periods.map((p, idx) => (
@@ -439,9 +441,9 @@ export const SOPModule: React.FC<SOPModuleProps> = ({
                     <tr className="bg-[#dbfced]/30 font-bold hover:bg-[#dbfced]/40 transition-colors">
                       <td className="py-3 px-5 text-black">
                         <div className="flex items-center justify-between gap-2">
-                          <span>Consensus Demand (Commercial Agreement)</span>
+                          <span>{t('sop.ledger.consensusDemand')}</span>
                           <span className="text-[9px] bg-[#7AFFA1] text-black px-2 py-0.5 rounded-full shadow-2xs font-extrabold shrink-0">
-                            Locked
+                            {t('sop.ledger.locked')}
                           </span>
                         </div>
                       </td>
@@ -468,10 +470,10 @@ export const SOPModule: React.FC<SOPModuleProps> = ({
             >
               <span className="flex items-center gap-2">
                 {capacityOpen ? <ChevronUp className="w-4 h-4 text-slate-500" /> : <ChevronDown className="w-4 h-4 text-slate-500" />}
-                <span>2. Operations & Supply Feasibility</span>
+                <span>{t('sop.ledger.capacitySection')}</span>
               </span>
               <span className="text-[11px] font-mono text-slate-500 font-semibold">
-                Ceiling: {totalCapacity.toLocaleString()} units
+                {t('sop.ledger.ceiling')} {totalCapacity.toLocaleString()} {t('sop.kpi.units')}
               </span>
             </button>
 
@@ -480,7 +482,7 @@ export const SOPModule: React.FC<SOPModuleProps> = ({
                 <table className="w-full text-left">
                   <tbody className="divide-y divide-black/5 text-slate-700">
                     <tr className="hover:bg-white/50 transition-colors">
-                      <td className="py-2.5 px-5 font-medium min-w-[220px]">Factory Ceiling Capacity</td>
+                      <td className="py-2.5 px-5 font-medium min-w-[220px]">{t('sop.ledger.factoryCeilingCapacity')}</td>
                       {currentPlan.periods.map((p) => (
                         <td key={p.period} className="py-2.5 px-4 text-right font-mono tabular-nums text-slate-600 min-w-[90px]">
                           {p.operationsCapacity.toLocaleString()}
@@ -493,7 +495,7 @@ export const SOPModule: React.FC<SOPModuleProps> = ({
 
                     <tr className="bg-white/40 font-bold">
                       <td className="py-2.5 px-5 text-black">
-                        Demand vs Supply Delta (Gap)
+                        {t('sop.ledger.gapRow')}
                       </td>
                       {currentPlan.periods.map((p) => (
                         <td

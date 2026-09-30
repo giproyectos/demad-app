@@ -10,6 +10,7 @@ import {
   GitBranch,
   X,
 } from 'lucide-react';
+import { useTranslation } from '../../i18n/i18n';
 
 interface MRPModuleProps {
   records: MRPRecord[];
@@ -24,6 +25,7 @@ export const MRPModule: React.FC<MRPModuleProps> = ({
   onExecuteAction,
   onExecuteAllActions,
 }) => {
+  const { t } = useTranslation();
   const [selectedPartId, setSelectedPartId] = useState<string>('all');
   const [activeTab, setActiveTab] = useState<'matrix' | 'actions' | 'bom_tree'>('matrix');
   const [peggedModalItem, setPeggedModalItem] = useState<{
@@ -48,15 +50,15 @@ export const MRPModule: React.FC<MRPModuleProps> = ({
         <div>
           <div className="flex items-center gap-2 text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">
             <span className="w-2 h-2 rounded-full bg-[#DDCBF5]"></span>
-            <span className="text-black font-extrabold">Stage 05</span>
+            <span className="text-black font-extrabold">{t('mrp.stage')}</span>
             <span className="text-slate-300">·</span>
-            <span>Multi-Level BOM Explosion & Procurement Lead Times</span>
+            <span>{t('mrp.horizonLabel')}</span>
           </div>
           <h1 className="text-xl sm:text-2xl font-black tracking-tight text-slate-950 flex flex-wrap items-center gap-3">
-            <span>Material Requirements Planning (MRP)</span>
+            <span>{t('mrp.title')}</span>
           </h1>
           <p className="text-xs text-slate-500 mt-0.5 font-medium">
-            Explode approved MPS builds down the BOM hierarchy, offset vendor lead times, and release POs to component suppliers.
+            {t('mrp.subtitle')}
           </p>
         </div>
 
@@ -67,7 +69,7 @@ export const MRPModule: React.FC<MRPModuleProps> = ({
               className="px-4 py-2 text-xs font-bold text-white bg-slate-950 hover:bg-black rounded-full flex items-center gap-1.5 transition-all cursor-pointer shadow-sm active:scale-95"
             >
               <Send className="w-3.5 h-3.5 text-[#7AFFA1]" />
-              <span>Transmit All POs ({pendingActions.length})</span>
+              <span>{t('mrp.transmitAllPos', { count: pendingActions.length })}</span>
             </button>
           )}
         </div>
@@ -84,7 +86,7 @@ export const MRPModule: React.FC<MRPModuleProps> = ({
                 : 'text-slate-600 hover:text-black'
             }`}
           >
-            Time-Phased MRP Ledger
+            {t('mrp.tabs.matrix')}
           </button>
           <button
             onClick={() => setActiveTab('actions')}
@@ -94,7 +96,7 @@ export const MRPModule: React.FC<MRPModuleProps> = ({
                 : 'text-slate-600 hover:text-black'
             }`}
           >
-            <span>Action Orders</span>
+            <span>{t('mrp.tabs.actions')}</span>
             {pendingActions.length > 0 && (
               <span className="text-[9px] font-mono font-bold bg-[#FFA27D] text-black px-1.5 py-0.5 rounded-full shadow-2xs">
                 {pendingActions.length}
@@ -109,19 +111,19 @@ export const MRPModule: React.FC<MRPModuleProps> = ({
                 : 'text-slate-600 hover:text-black'
             }`}
           >
-            BOM Hierarchy
+            {t('mrp.tabs.bomTree')}
           </button>
         </div>
 
         {activeTab === 'matrix' && (
           <div className="flex items-center gap-2 text-xs">
-            <span className="text-slate-500 font-bold">Filter Part:</span>
+            <span className="text-slate-500 font-bold">{t('mrp.filterPart')}</span>
             <select
               value={selectedPartId}
               onChange={(e) => setSelectedPartId(e.target.value)}
               className="bg-white/80 border border-slate-200 text-slate-800 font-semibold rounded-full px-3 py-1 text-xs focus:outline-none glass-pill cursor-pointer"
             >
-              <option value="all">All Exploded Parts ({records.length})</option>
+              <option value="all">{t('mrp.allExplodedParts', { count: records.length })}</option>
               {records.map((r) => (
                 <option key={r.component.id} value={r.component.id}>
                   {r.component.partNumber} · {r.component.name}
@@ -155,38 +157,38 @@ export const MRPModule: React.FC<MRPModuleProps> = ({
                         {component.name}
                       </span>
                       <span className="text-[9px] font-mono font-bold bg-[#DDCBF5] text-black px-2 py-0.5 rounded-full">
-                        Level {component.level}
+                        {t('mrp.table.level', { level: component.level })}
                       </span>
                     </div>
 
                     <div className="flex items-center gap-3 text-[11px] text-slate-500 mt-0.5 flex-wrap">
                       <span className="flex items-center gap-1">
                         <Building2 className="w-3 h-3 text-slate-400" />
-                        <span>Supplier: <strong className="text-black font-semibold">{component.supplier}</strong> ({component.supplierReliabilityPct}%)</span>
+                        <span>{t('mrp.table.supplierLabel')} <strong className="text-black font-semibold">{component.supplier}</strong> ({component.supplierReliabilityPct}%)</span>
                       </span>
                       <span className="text-slate-300">·</span>
                       <span className="flex items-center gap-1">
                         <Clock className="w-3 h-3 text-slate-400" />
-                        <span>Lead Time: <strong className="text-black font-mono font-bold">{component.leadTimeWeeks}w</strong></span>
+                        <span>{t('mrp.table.leadTimeLabel')} <strong className="text-black font-mono font-bold">{component.leadTimeWeeks}w</strong></span>
                       </span>
                       <span className="text-slate-300">·</span>
-                      <span>Lot: <strong className="text-black font-semibold">{component.lotSizingRule} ({component.lotSizeQty} {component.unit})</strong></span>
+                      <span>{t('mrp.table.lotLabel')} <strong className="text-black font-semibold">{component.lotSizingRule} ({component.lotSizeQty} {component.unit})</strong></span>
                     </div>
                   </div>
 
                   <div className="flex items-center gap-3 text-xs text-slate-500 shrink-0 font-medium flex-wrap">
                     <div>
-                      <span>Stock: </span>
+                      <span>{t('mrp.table.stockLabel')} </span>
                       <strong className="text-black font-mono font-bold">{component.currentStock} {component.unit}</strong>
                     </div>
                     <span className="text-slate-200">|</span>
                     <div>
-                      <span>Safety: </span>
+                      <span>{t('mrp.table.safetyLabel')} </span>
                       <strong className="text-black font-mono font-bold">{component.safetyStock} {component.unit}</strong>
                     </div>
                     <span className="text-slate-200">|</span>
                     <div>
-                      <span>Cost: </span>
+                      <span>{t('mrp.table.costLabel')} </span>
                       <strong className="text-black font-mono font-bold">${component.standardCostUSD}</strong>
                     </div>
                   </div>
@@ -198,7 +200,7 @@ export const MRPModule: React.FC<MRPModuleProps> = ({
                     <thead className="bg-white/30 text-slate-400 font-mono text-[11px] uppercase border-b border-black/5">
                       <tr>
                         <th className="py-2.5 px-5 font-bold min-w-[220px]">
-                          Gross-to-Net Element
+                          {t('mrp.table.element')}
                         </th>
                         {periods.map((p) => (
                           <th key={p.week} className="py-2.5 px-4 text-right font-bold min-w-[85px]">
@@ -212,8 +214,8 @@ export const MRPModule: React.FC<MRPModuleProps> = ({
                       <tr className="hover:bg-white/50 transition-colors">
                         <td className="py-2.5 px-5 font-bold text-black min-w-[220px]">
                           <div className="flex items-center justify-between gap-2">
-                            <span>Gross Requirements (Parent MPS)</span>
-                            <span className="text-[10px] text-slate-400 font-sans font-normal shrink-0">click trace</span>
+                            <span>{t('mrp.table.grossRequirements')}</span>
+                            <span className="text-[10px] text-slate-400 font-sans font-normal shrink-0">{t('mrp.table.clickTrace')}</span>
                           </div>
                         </td>
                         {periods.map((p) => (
@@ -229,7 +231,7 @@ export const MRPModule: React.FC<MRPModuleProps> = ({
                               })
                             }
                             className="py-2.5 px-4 text-right font-mono tabular-nums text-slate-800 hover:text-black font-semibold cursor-pointer hover:underline"
-                            title="Click to view pegged demand source"
+                            title={t('mrp.table.clickTraceTitle')}
                           >
                             {p.grossRequirements}
                           </td>
@@ -239,7 +241,7 @@ export const MRPModule: React.FC<MRPModuleProps> = ({
                       {/* Scheduled Receipts */}
                       <tr className="hover:bg-white/50 transition-colors">
                         <td className="py-2.5 px-5 font-medium text-slate-600">
-                          Scheduled Receipts (Open POs)
+                          {t('mrp.table.scheduledReceipts')}
                         </td>
                         {periods.map((p) => (
                           <td key={p.week} className="py-2.5 px-4 text-right font-mono tabular-nums text-slate-500">
@@ -251,7 +253,7 @@ export const MRPModule: React.FC<MRPModuleProps> = ({
                       {/* Projected On Hand */}
                       <tr className="hover:bg-white/50 transition-colors bg-white/20">
                         <td className="py-2.5 px-5 font-bold text-black">
-                          Projected Available Balance (PAB)
+                          {t('mrp.table.projectedOnHand')}
                         </td>
                         {periods.map((p) => (
                           <td
@@ -270,7 +272,7 @@ export const MRPModule: React.FC<MRPModuleProps> = ({
                       {/* Net Requirements */}
                       <tr className="hover:bg-white/50 transition-colors">
                         <td className="py-2.5 px-5 font-medium text-slate-600">
-                          Net Requirements
+                          {t('mrp.table.netRequirements')}
                         </td>
                         {periods.map((p) => (
                           <td
@@ -287,7 +289,7 @@ export const MRPModule: React.FC<MRPModuleProps> = ({
                       {/* Planned Order Receipts */}
                       <tr className="hover:bg-white/50 transition-colors">
                         <td className="py-2.5 px-5 font-medium text-slate-600">
-                          Planned Order Receipts
+                          {t('mrp.table.plannedOrderReceipts')}
                         </td>
                         {periods.map((p) => (
                           <td key={p.week} className="py-2.5 px-4 text-right font-mono tabular-nums text-slate-700">
@@ -300,9 +302,9 @@ export const MRPModule: React.FC<MRPModuleProps> = ({
                       <tr className="hover:bg-white/50 transition-colors bg-[#dbfced]/30 font-bold">
                         <td className="py-3 px-5 text-black min-w-[220px]">
                           <div className="flex items-center justify-between gap-2">
-                            <span>Planned Order Releases (Offset {component.leadTimeWeeks}w)</span>
+                            <span>{t('mrp.table.plannedOrderReleases', { weeks: component.leadTimeWeeks })}</span>
                             <span className="text-[9px] bg-[#7AFFA1] text-black px-2 py-0.5 rounded-full shadow-2xs font-extrabold shrink-0">
-                              PO Trigger
+                              {t('mrp.table.poTrigger')}
                             </span>
                           </div>
                         </td>
@@ -336,10 +338,10 @@ export const MRPModule: React.FC<MRPModuleProps> = ({
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <div>
               <h3 className="text-base font-black text-black">
-                Automated Procurement & Action Orders
+                {t('mrp.actions.title')}
               </h3>
               <p className="text-xs text-slate-500 font-medium mt-0.5">
-                Regenerated signals from BOM explosion requiring purchasing release, lead-time expedite, or quantity cancellation.
+                {t('mrp.actions.subtitle')}
               </p>
             </div>
             {pendingActions.length > 0 && (
@@ -348,7 +350,7 @@ export const MRPModule: React.FC<MRPModuleProps> = ({
                 className="px-4 py-1.5 text-xs font-bold text-white bg-slate-950 hover:bg-black rounded-full flex items-center gap-1.5 cursor-pointer shadow-xs active:scale-95 transition-all self-start sm:self-auto"
               >
                 <Send className="w-3 h-3 text-[#7AFFA1]" />
-                <span>Execute All ({pendingActions.length})</span>
+                <span>{t('mrp.actions.executeAll', { count: pendingActions.length })}</span>
               </button>
             )}
           </div>
@@ -396,18 +398,22 @@ export const MRPModule: React.FC<MRPModuleProps> = ({
                             : 'bg-slate-200 text-slate-800'
                         }`}
                       >
-                        {msg.type.toUpperCase()}
+                        {t(`mrp.badges.type.${msg.type}`).toUpperCase()}
                       </span>
                       <span className="text-slate-400 text-xs font-semibold">
-                        Due: {msg.weekRequired}
+                        {t('mrp.actions.due', { week: msg.weekRequired })}
                       </span>
                     </div>
 
                     <div className="text-xs font-black text-black mt-1 truncate">
-                      {msg.type} {msg.quantity.toLocaleString()} units with {msg.supplier}
+                      {t('mrp.actions.summaryLine', {
+                        type: t(`mrp.badges.type.${msg.type}`),
+                        quantity: msg.quantity.toLocaleString(),
+                        supplier: msg.supplier,
+                      })}
                     </div>
                     <div className="text-xs text-slate-600 font-medium mt-0.5">
-                      {msg.reason}
+                      {t(`mrp.actionReasons.${msg.id}`)}
                     </div>
                   </div>
                 </div>
@@ -415,7 +421,7 @@ export const MRPModule: React.FC<MRPModuleProps> = ({
                 <div className="flex items-center gap-2 shrink-0">
                   {msg.executed ? (
                     <span className="text-xs font-bold text-slate-500 bg-white/80 px-3 py-1 rounded-full border border-slate-200">
-                      Transmitted to Supplier EDI
+                      {t('mrp.actions.transmitted')}
                     </span>
                   ) : (
                     <button
@@ -423,7 +429,7 @@ export const MRPModule: React.FC<MRPModuleProps> = ({
                       className="px-4 py-1.5 text-xs font-bold text-white bg-slate-950 hover:bg-black rounded-full flex items-center gap-1.5 cursor-pointer shadow-xs active:scale-95 transition-all"
                     >
                       <Send className="w-3 h-3 text-[#7AFFA1]" />
-                      <span>Execute & Transmit</span>
+                      <span>{t('mrp.actions.executeTransmit')}</span>
                     </button>
                   )}
                 </div>
@@ -438,10 +444,10 @@ export const MRPModule: React.FC<MRPModuleProps> = ({
         <div className="glass-panel rounded-3xl p-5 space-y-4">
           <div>
             <h3 className="text-base font-black text-black">
-              Engineering Bill of Materials Hierarchy (Indented Tree)
+              {t('mrp.bomTree.title')}
             </h3>
             <p className="text-xs text-slate-500 font-medium mt-0.5">
-              Structural component tree of Finished SKU SD-120P (Servo Drive Pro S-120) with lead time offsets and unit costs.
+              {t('mrp.bomTree.subtitle')}
             </p>
           </div>
 
@@ -450,11 +456,11 @@ export const MRPModule: React.FC<MRPModuleProps> = ({
             <div className="p-3.5 rounded-2xl bg-slate-950 text-white flex items-center justify-between shadow-xs">
               <div className="flex items-center gap-2.5">
                 <span className="px-2 py-0.5 text-[9px] font-black rounded-full bg-[#7AFFA1] text-black">
-                  LEVEL 0
+                  {t('mrp.bomTree.level0')}
                 </span>
-                <span className="font-bold">SKU-4001 · SD-120P: Servo Drive Pro S-120 (Finished End-Item)</span>
+                <span className="font-bold">{t('mrp.bomTree.finishedGoodLabel')}</span>
               </div>
-              <span className="text-slate-300 font-semibold">$380.00 / unit</span>
+              <span className="text-slate-300 font-semibold">{t('mrp.bomTree.costPerUnit')}</span>
             </div>
 
             {/* Level 1 Components */}
@@ -475,7 +481,7 @@ export const MRPModule: React.FC<MRPModuleProps> = ({
                           {c.partNumber} · {c.name}
                         </div>
                         <div className="text-[11px] text-slate-500 font-sans font-medium mt-0.5">
-                          Qty Per Parent: <strong className="text-black">{c.quantityPerParent}</strong> · Lead Time: <strong className="text-black">{c.leadTimeWeeks}w</strong> · Vendor: <strong className="text-black">{c.supplier}</strong>
+                          {t('mrp.bomTree.qtyPerParent')} <strong className="text-black">{c.quantityPerParent}</strong> · {t('mrp.bomTree.leadTime')} <strong className="text-black">{c.leadTimeWeeks}w</strong> · {t('mrp.bomTree.vendor')} <strong className="text-black">{c.supplier}</strong>
                         </div>
                       </div>
                     </div>
@@ -485,7 +491,7 @@ export const MRPModule: React.FC<MRPModuleProps> = ({
                         ${c.standardCostUSD}
                       </div>
                       <div className="text-[10px] text-slate-400 font-sans font-medium">
-                        Standard Cost
+                        {t('mrp.bomTree.standardCost')}
                       </div>
                     </div>
                   </div>
@@ -505,7 +511,7 @@ export const MRPModule: React.FC<MRPModuleProps> = ({
                 <div className="w-8 h-8 rounded-full bg-[#DDCBF5] flex items-center justify-center text-black font-bold">
                   <GitBranch className="w-4 h-4" />
                 </div>
-                <h3 className="text-sm font-black text-black">Pegged Demand Trace</h3>
+                <h3 className="text-sm font-black text-black">{t('mrp.modal.title')}</h3>
               </div>
               <button
                 onClick={() => setPeggedModalItem(null)}
@@ -516,28 +522,28 @@ export const MRPModule: React.FC<MRPModuleProps> = ({
             </div>
 
             <p className="text-xs text-slate-600 font-medium">
-              Upward requirement pegging links component requirement to parent finished product assembly and client booking.
+              {t('mrp.modal.description')}
             </p>
 
             <div className="space-y-2 text-xs bg-white/60 p-4 rounded-2xl border border-white/70">
               <div className="flex justify-between">
-                <span className="text-slate-500 font-medium">Component:</span>
+                <span className="text-slate-500 font-medium">{t('mrp.modal.component')}</span>
                 <span className="font-bold text-black">{peggedModalItem.part}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-slate-500 font-medium">Schedule Week:</span>
+                <span className="text-slate-500 font-medium">{t('mrp.modal.scheduleWeek')}</span>
                 <span className="font-mono font-bold text-black">{peggedModalItem.week}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-slate-500 font-medium">Parent Assembly:</span>
+                <span className="text-slate-500 font-medium">{t('mrp.modal.parentAssembly')}</span>
                 <span className="font-bold text-black">{peggedModalItem.parentSku}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-slate-500 font-medium">Parent Batch Size:</span>
-                <span className="font-mono font-bold text-black">{peggedModalItem.parentLot} assemblies</span>
+                <span className="text-slate-500 font-medium">{t('mrp.modal.parentBatchSize')}</span>
+                <span className="font-mono font-bold text-black">{peggedModalItem.parentLot} {t('mrp.modal.assemblies')}</span>
               </div>
               <div className="flex justify-between pt-2 border-t border-black/5">
-                <span className="text-slate-500 font-medium">Customer Order Ref:</span>
+                <span className="text-slate-500 font-medium">{t('mrp.modal.customerOrderRef')}</span>
                 <span className="font-mono font-black text-black">{peggedModalItem.customerOrderRef}</span>
               </div>
             </div>
@@ -547,7 +553,7 @@ export const MRPModule: React.FC<MRPModuleProps> = ({
                 onClick={() => setPeggedModalItem(null)}
                 className="px-5 py-2 text-xs font-bold text-white bg-slate-950 hover:bg-black rounded-full cursor-pointer shadow-xs active:scale-95 transition-all"
               >
-                Close Trace
+                {t('mrp.modal.closeTrace')}
               </button>
             </div>
           </div>

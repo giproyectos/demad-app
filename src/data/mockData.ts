@@ -8,6 +8,13 @@ import {
   MRPRecord,
   MRPActionMessage,
 } from '../types/demand';
+import {
+  deriveSOPPlan,
+  deriveDRPRow,
+  deriveCRPWorkCenter,
+  deriveMPSSku,
+  deriveMRPRecord,
+} from './derive';
 
 export const productFamilies: ProductFamily[] = [
   {
@@ -36,7 +43,7 @@ export const productFamilies: ProductFamily[] = [
   },
 ];
 
-export const initialSOPPlans: Record<string, SOPFamilyPlan> = {
+const rawSOPPlans: Record<string, SOPFamilyPlan> = {
   'fam-pmd': {
     familyId: 'fam-pmd',
     familyName: 'Precision Motion Drives',
@@ -199,6 +206,10 @@ export const initialSOPPlans: Record<string, SOPFamilyPlan> = {
   },
 };
 
+export const initialSOPPlans: Record<string, SOPFamilyPlan> = Object.fromEntries(
+  Object.entries(rawSOPPlans).map(([key, plan]) => [key, deriveSOPPlan(plan)])
+);
+
 export const distributionCenters: DistributionCenter[] = [
   {
     id: 'cdc-detroit',
@@ -257,7 +268,7 @@ export const distributionCenters: DistributionCenter[] = [
   },
 ];
 
-export const initialDRPRows: DRPReplenishmentRow[] = [
+const rawDRPRows: DRPReplenishmentRow[] = [
   {
     depotId: 'rdc-east',
     depotName: 'East Coast DC (Allentown)',
@@ -302,7 +313,11 @@ export const initialDRPRows: DRPReplenishmentRow[] = [
   },
 ];
 
-export const initialMPSSkus: MPSSkuRow[] = [
+export const initialDRPRows: DRPReplenishmentRow[] = rawDRPRows.map((row) =>
+  deriveDRPRow(row, distributionCenters)
+);
+
+const rawMPSSkus: MPSSkuRow[] = [
   {
     skuId: 'sku-4001',
     skuCode: 'SD-120P',
@@ -529,7 +544,9 @@ export const initialMPSSkus: MPSSkuRow[] = [
   },
 ];
 
-export const initialWorkCenters: WorkCenterCRP[] = [
+export const initialMPSSkus: MPSSkuRow[] = rawMPSSkus.map(deriveMPSSku);
+
+const rawWorkCenters: WorkCenterCRP[] = [
   {
     workCenter: {
       id: 'wc-101',
@@ -624,7 +641,9 @@ export const initialWorkCenters: WorkCenterCRP[] = [
   },
 ];
 
-export const initialMRPRecords: MRPRecord[] = [
+export const initialWorkCenters: WorkCenterCRP[] = rawWorkCenters.map(deriveCRPWorkCenter);
+
+const rawMRPRecords: MRPRecord[] = [
   {
     component: {
       id: 'comp-dsp',
@@ -743,6 +762,8 @@ export const initialMRPRecords: MRPRecord[] = [
   },
 ];
 
+export const initialMRPRecords: MRPRecord[] = rawMRPRecords.map(deriveMRPRecord);
+
 export const initialActionMessages: MRPActionMessage[] = [
   {
     id: 'act-001',
@@ -751,9 +772,9 @@ export const initialActionMessages: MRPActionMessage[] = [
     type: 'Release Order',
     urgency: 'High',
     weekRequired: 'W40',
-    quantity: 400,
+    quantity: 50,
     supplier: 'NXP Semiconductors B.V.',
-    reason: 'Planned order release due today to protect Week 43 MPS build schedule.',
+    reason: 'Opening on-hand (450 EA) sits below the 500 EA lot-for-lot cover needed for Week 43; release 50 EA today to restore the 100 EA safety buffer.',
     executed: false,
   },
   {
@@ -765,7 +786,7 @@ export const initialActionMessages: MRPActionMessage[] = [
     weekRequired: 'W44',
     quantity: 1000,
     supplier: 'Infineon Technologies AG',
-    reason: 'Projected negative available balance (-80 EA) in W44; pull forward PO #8892 by 1 week.',
+    reason: 'Recurring 800 EA/week draw outpaces scheduled receipts again in W44, requiring a second 1,000 EA lot to hold the 200 EA safety buffer; pull forward PO #8892 by 1 week.',
     executed: false,
   },
   {
@@ -775,7 +796,7 @@ export const initialActionMessages: MRPActionMessage[] = [
     type: 'Release Order',
     urgency: 'Medium',
     weekRequired: 'W40',
-    quantity: 400,
+    quantity: 100,
     supplier: 'Apex Precision Metals Corp',
     reason: 'Firm shop floor fabrication order required for machine cell WC-101.',
     executed: false,
@@ -786,10 +807,10 @@ export const initialActionMessages: MRPActionMessage[] = [
     partName: '24-Bit Optical Absolute Encoder',
     type: 'Release Order',
     urgency: 'Low',
-    weekRequired: 'W41',
+    weekRequired: 'W40',
     quantity: 600,
     supplier: 'Renishaw Optical Systems',
-    reason: 'Replenishment order release for W43 arrival per fixed batch policy.',
+    reason: 'Replenishment order release for W42 arrival per fixed batch policy.',
     executed: false,
   },
 ];

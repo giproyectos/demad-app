@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Search, ArrowRight, BarChart3, Truck, CalendarRange, Cpu, Boxes, RefreshCw, Download, Layers, ShieldCheck, X } from 'lucide-react';
 import { ProcessStep, PlanningScenario } from '../../types/demand';
+import { useTranslation } from '../../i18n/i18n';
 
 interface CommandPaletteProps {
   isOpen: boolean;
@@ -29,6 +30,7 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
   onTriggerExport,
   onSelectScenario,
 }) => {
+  const { t } = useTranslation();
   const [query, setQuery] = useState('');
 
   useEffect(() => {
@@ -50,8 +52,8 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
     {
       id: 'step-sop',
       category: 'Navigation',
-      title: 'Sales & Operations Planning (S&OP)',
-      subtitle: 'Executive consensus & 6-month demand reconciliation',
+      title: t('modals.commandPalette.items.sop.title'),
+      subtitle: t('modals.commandPalette.items.sop.subtitle'),
       icon: BarChart3,
       accentBg: 'bg-[#dbfced]',
       action: () => {
@@ -62,8 +64,8 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
     {
       id: 'step-drp',
       category: 'Navigation',
-      title: 'Distribution Requirements Planning (DRP)',
-      subtitle: 'Multi-echelon network topology & depot replenishment',
+      title: t('modals.commandPalette.items.drp.title'),
+      subtitle: t('modals.commandPalette.items.drp.subtitle'),
       icon: Truck,
       accentBg: 'bg-[#fffde3]',
       action: () => {
@@ -74,8 +76,8 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
     {
       id: 'step-mps',
       category: 'Navigation',
-      title: 'Master Production Schedule (MPS)',
-      subtitle: 'Time fences (Frozen / Slushy / Liquid) & ATP calculations',
+      title: t('modals.commandPalette.items.mps.title'),
+      subtitle: t('modals.commandPalette.items.mps.subtitle'),
       icon: CalendarRange,
       accentBg: 'bg-[#dbfced]',
       action: () => {
@@ -86,8 +88,8 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
     {
       id: 'step-crp',
       category: 'Navigation',
-      title: 'Capacity Requirements Planning (CRP)',
-      subtitle: 'Work center finite loading & bottleneck leveling',
+      title: t('modals.commandPalette.items.crp.title'),
+      subtitle: t('modals.commandPalette.items.crp.subtitle'),
       icon: Cpu,
       accentBg: 'bg-[#ffefe8]',
       action: () => {
@@ -98,8 +100,8 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
     {
       id: 'step-mrp',
       category: 'Navigation',
-      title: 'Material Requirements Planning (MRP)',
-      subtitle: 'Multi-level BOM explosion & supplier PO execution',
+      title: t('modals.commandPalette.items.mrp.title'),
+      subtitle: t('modals.commandPalette.items.mrp.subtitle'),
       icon: Boxes,
       accentBg: 'bg-[#f5effe]',
       action: () => {
@@ -110,8 +112,8 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
     {
       id: 'act-regen',
       category: 'Actions',
-      title: 'Regenerate Closed-Loop Supply Chain',
-      subtitle: 'Trigger full-horizon recomputation across S&OP ➔ MRP',
+      title: t('modals.commandPalette.items.regen.title'),
+      subtitle: t('modals.commandPalette.items.regen.subtitle'),
       icon: RefreshCw,
       accentBg: 'bg-[#dbfced]',
       action: () => {
@@ -122,8 +124,8 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
     {
       id: 'act-export',
       category: 'Actions',
-      title: 'Export Consolidated Supply Chain Dossier',
-      subtitle: 'Download complete state as CSV or ERP-compatible JSON',
+      title: t('modals.commandPalette.items.exportItem.title'),
+      subtitle: t('modals.commandPalette.items.exportItem.subtitle'),
       icon: Download,
       accentBg: 'bg-slate-100',
       action: () => {
@@ -134,8 +136,8 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
     {
       id: 'scen-baseline',
       category: 'Scenarios',
-      title: 'Scenario: Baseline Operating Plan',
-      subtitle: 'Standard planned volume and rated plant capacity',
+      title: t('modals.commandPalette.items.scenBaseline.title'),
+      subtitle: t('modals.commandPalette.items.scenBaseline.subtitle'),
       icon: Layers,
       accentBg: 'bg-slate-100',
       action: () => {
@@ -146,8 +148,8 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
     {
       id: 'scen-surge',
       category: 'Scenarios',
-      title: 'Scenario: Demand Surge (+18%)',
-      subtitle: 'Simulate high commercial intake with capacity constraints',
+      title: t('modals.commandPalette.items.scenSurge.title'),
+      subtitle: t('modals.commandPalette.items.scenSurge.subtitle'),
       icon: Layers,
       accentBg: 'bg-[#ffefe8]',
       action: () => {
@@ -158,8 +160,8 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
     {
       id: 'entity-sku1',
       category: 'Entities',
-      title: 'SKU: SD-120P · Servo Drive Pro S-120',
-      subtitle: 'Motion Control family · 3,200 finished units scheduled',
+      title: t('modals.commandPalette.items.skuEntity.title'),
+      subtitle: t('modals.commandPalette.items.skuEntity.subtitle'),
       icon: Boxes,
       accentBg: 'bg-[#f5effe]',
       action: () => {
@@ -170,8 +172,8 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
     {
       id: 'entity-wc101',
       category: 'Entities',
-      title: 'Work Center: WC-101 (5-Axis CNC Cell)',
-      subtitle: 'Fabrication & Housings · Peak load 115.7%',
+      title: t('modals.commandPalette.items.wcEntity.title'),
+      subtitle: t('modals.commandPalette.items.wcEntity.subtitle'),
       icon: Cpu,
       accentBg: 'bg-[#ffefe8]',
       action: () => {
@@ -199,7 +201,7 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
           <input
             type="text"
             autoFocus
-            placeholder="Type a command, process step, SKU, work center, or scenario..."
+            placeholder={t('modals.commandPalette.placeholder')}
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             className="w-full bg-transparent text-sm text-slate-900 placeholder-slate-400 font-medium focus:outline-none"
@@ -213,7 +215,7 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
         <div className="max-h-[380px] overflow-y-auto p-3 divide-y divide-slate-100">
           {filtered.length === 0 ? (
             <div className="p-8 text-center text-xs text-slate-500 font-medium">
-              No matching commands or entities found for "{query}".
+              {t('modals.commandPalette.noResults', { query })}
             </div>
           ) : (
             filtered.map((item) => {
@@ -232,7 +234,7 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
                       <div className="text-xs font-bold text-slate-900 group-hover:text-black flex items-center gap-2">
                         <span>{item.title}</span>
                         <span className="text-[10px] font-bold text-slate-600 px-2 py-0.5 bg-slate-100 rounded-full">
-                          {item.category}
+                          {t(`modals.commandPalette.categories.${item.category}`)}
                         </span>
                       </div>
                       <div className="text-[11px] text-slate-500 font-medium mt-0.5">
@@ -252,10 +254,10 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
         {/* Footer shortcuts */}
         <div className="px-5 py-3 bg-slate-50/80 border-t border-slate-100 flex items-center justify-between text-[11px] text-slate-500 font-medium">
           <div className="flex items-center gap-4">
-            <span>Navigate: <kbd className="font-bold text-slate-800">↑</kbd> <kbd className="font-bold text-slate-800">↓</kbd></span>
-            <span>Select: <kbd className="font-bold text-slate-800">↵</kbd></span>
+            <span>{t('modals.commandPalette.navigate')} <kbd className="font-bold text-slate-800">↑</kbd> <kbd className="font-bold text-slate-800">↓</kbd></span>
+            <span>{t('modals.commandPalette.select')} <kbd className="font-bold text-slate-800">↵</kbd></span>
           </div>
-          <span className="font-extrabold text-black">vx. Operations Kernel</span>
+          <span className="font-extrabold text-black">{t('modals.commandPalette.footerBrand')}</span>
         </div>
       </div>
     </div>

@@ -1,56 +1,136 @@
 import React from 'react';
-import { Download, FileSpreadsheet, Check, X, FileText } from 'lucide-react';
-import { PlanningScenario } from '../../types/demand';
+import { Download, FileSpreadsheet, X } from 'lucide-react';
+import {
+  PlanningScenario,
+  SOPFamilyPlan,
+  DRPReplenishmentRow,
+  MPSSkuRow,
+  WorkCenterCRP,
+  MRPRecord,
+  MRPActionMessage,
+} from '../../types/demand';
+import { useTranslation } from '../../i18n/i18n';
 
 interface ExportModalProps {
   isOpen: boolean;
   onClose: () => void;
   scenario: PlanningScenario;
+  sopPlans: Record<string, SOPFamilyPlan>;
+  drpRows: DRPReplenishmentRow[];
+  mpsSkus: MPSSkuRow[];
+  workCenters: WorkCenterCRP[];
+  mrpRecords: MRPRecord[];
+  actionMessages: MRPActionMessage[];
+}
+
+function csvEscape(value: string | number): string {
+  const str = String(value);
+  return /[",\n]/.test(str) ? `"${str.replace(/"/g, '""')}"` : str;
+}
+
+function toCsvRow(values: (string | number)[]): string {
+  return values.map(csvEscape).join(',');
 }
 
 export const ExportModal: React.FC<ExportModalProps> = ({
   isOpen,
   onClose,
   scenario,
+  sopPlans,
+  drpRows,
+  mpsSkus,
+  workCenters,
+  mrpRecords,
+  actionMessages,
 }) => {
+  const { t } = useTranslation();
   if (!isOpen) return null;
 
-  const handleDownload = (format: 'csv' | 'json' | 'pdf') => {
-    const reportData = `TESSARIS DEMAND & SUPPLY CHAIN OPERATIONS REPORT
-Planning Scenario: ${scenario.toUpperCase()}
-Generated: ${new Date().toISOString()}
+  const buildCsv = (): string => {
+    const lines: string[] = [];
+    lines.push(toCsvRow(['Tessaris Demand & Operations Suite']));
+    lines.push(toCsvRow(['Scenario', scenario]));
+    lines.push(toCsvRow(['Generated', new Date().toISOString()]));
+    lines.push('');
 
-=============================================
-SECTION 1: S&OP CONSENSUS SUMMARY
-Precision Motion Drives: 10,160 units ($15.24M)
-Robotics Control Modules: 6,150 units ($12.30M)
+    lines.push(toCsvRow(['SECTION 1: S&OP']));
+    lines.push(toCsvRow(['Family', 'Period', 'Consensus Demand', 'Operations Capacity', 'Gap', 'Projected Revenue ($K)']));
+    Object.values(sopPlans).forEach((plan) => {
+      plan.periods.forEach((p) => {
+        lines.push(toCsvRow([plan.familyName, p.period, p.consensusDemand, p.operationsCapacity, p.gap, p.projectedRevenue]));
+      });
+    });
+    lines.push('');
 
-SECTION 2: DRP OUTBOUND REPLENISHMENTS
-East Coast DC (Allentown): 1,020 units
-Pacific West Coast (Ontario): 875 units
-Midwest Regional (Joliet): 760 units
+    lines.push(toCsvRow(['SECTION 2: DRP']));
+    lines.push(toCsvRow(['Depot', 'SKU', 'Week', 'Gross Requirement', 'Projected On Hand', 'Net Requirement', 'Planned Order Release']));
+    drpRows.forEach((row) => {
+      row.periods.forEach((p) => {
+        lines.push(toCsvRow([row.depotName, row.skuName, p.week, p.grossRequirement, p.projectedOnHand, p.netRequirement, p.plannedOrderRelease]));
+      });
+    });
+    lines.push('');
 
-SECTION 3: MPS COMMITTED BUILD LOTS
-SD-120P (Precision Servo): 3,200 units (Frozen: 800 | Slushy: 1,200 | Liquid: 1,200)
-MC-800X (Motion Controller): 2,250 units (Frozen: 600 | Slushy: 750 | Liquid: 900)
+    lines.push(toCsvRow(['SECTION 3: MPS']));
+    lines.push(toCsvRow(['SKU', 'Week', 'Zone', 'Forecast Demand', 'Customer Orders', 'Planned Build', 'Projected Available Balance', 'Discrete ATP', 'Cumulative ATP']));
+    mpsSkus.forEach((sku) => {
+      sku.periods.forEach((p) => {
+        lines.push(toCsvRow([sku.skuName, p.week, p.zone, p.forecastDemand, p.customerOrders, p.mpsPlannedBuild, p.projectedAvailableBalance, p.discreteATP, p.cumulativeATP]));
+      });
+    });
+    lines.push('');
 
-SECTION 4: CRP WORK CENTER UTILIZATION
-WC-101 (5-Axis CNC): 99.4% avg (Peak 115.7% - Overtime authorized)
-WC-202 (SMT Electronics): 94.9% avg
-WC-303 (Laser Brazing): 94.6% avg
-WC-404 (Calibration & QA): 93.6% avg
+    lines.push(toCsvRow(['SECTION 4: CRP']));
+    lines.push(toCsvRow(['Work Center', 'Week', 'Planned Load Hours', 'Effective Capacity Hours', 'Utilization %', 'Status']));
+    workCenters.forEach((wc) => {
+      wc.loadByWeek.forEach((l) => {
+        lines.push(toCsvRow([wc.workCenter.name, l.week, l.mpsPlannedLoadHours, l.effectiveCapacityHours, l.utilizationPct, l.status]));
+      });
+    });
+    lines.push('');
 
-SECTION 5: MRP GENERATED PURCHASE ORDERS
-PO-8841 -> NXP Semiconductors (400 EA IC-DSP-M7) - Release Due W40
-PO-8892 -> Infineon Technologies (1,000 EA MOD-SIC-1200) - Expedited W44
-PO-8903 -> Apex Precision (400 EA ENC-AL-6061) - Released W40
-=============================================`;
+    lines.push(toCsvRow(['SECTION 5: MRP']));
+    lines.push(toCsvRow(['Part Number', 'Component', 'Week', 'Gross Requirements', 'Projected On Hand', 'Net Requirements', 'Planned Order Receipts', 'Planned Order Releases']));
+    mrpRecords.forEach((rec) => {
+      rec.periods.forEach((p) => {
+        lines.push(toCsvRow([rec.component.partNumber, rec.component.name, p.week, p.grossRequirements, p.projectedOnHand, p.netRequirements, p.plannedOrderReceipts, p.plannedOrderReleases]));
+      });
+    });
+    lines.push('');
 
-    const blob = new Blob([reportData], { type: 'text/plain;charset=utf-8' });
+    lines.push(toCsvRow(['SECTION 6: MRP ACTION ORDERS']));
+    lines.push(toCsvRow(['Part Number', 'Type', 'Urgency', 'Week Required', 'Quantity', 'Supplier', 'Executed']));
+    actionMessages.forEach((a) => {
+      lines.push(toCsvRow([a.partNumber, a.type, a.urgency, a.weekRequired, a.quantity, a.supplier, a.executed ? 'Yes' : 'No']));
+    });
+
+    return lines.join('\n');
+  };
+
+  const buildJson = (): string =>
+    JSON.stringify(
+      {
+        scenario,
+        generatedAt: new Date().toISOString(),
+        sop: sopPlans,
+        drp: drpRows,
+        mps: mpsSkus,
+        crp: workCenters,
+        mrp: mrpRecords,
+        mrpActionOrders: actionMessages,
+      },
+      null,
+      2
+    );
+
+  const handleDownload = (format: 'csv' | 'json') => {
+    const content = format === 'csv' ? buildCsv() : buildJson();
+    const mime = format === 'csv' ? 'text/csv;charset=utf-8' : 'application/json;charset=utf-8';
+    const blob = new Blob([content], { type: mime });
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
     link.href = url;
-    link.setAttribute('download', `tessaris_demand_ops_report_${scenario}_${Date.now()}.txt`);
+    link.setAttribute('download', `tessaris_demand_ops_report_${scenario}_${Date.now()}.${format}`);
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -67,8 +147,8 @@ PO-8903 -> Apex Precision (400 EA ENC-AL-6061) - Released W40
               <Download className="w-5 h-5" />
             </div>
             <div>
-              <h3 className="text-base font-black text-slate-900">Export Supply Chain Dossier</h3>
-              <p className="text-xs text-slate-500 font-medium">Scenario: <span className="capitalize font-bold text-black">{scenario}</span></p>
+              <h3 className="text-base font-black text-slate-900">{t('modals.exportModal.title')}</h3>
+              <p className="text-xs text-slate-500 font-medium">{t('modals.exportModal.scenario')} <span className="capitalize font-bold text-black">{t(`common.scenarios.${scenario}`)}</span></p>
             </div>
           </div>
           <button
@@ -80,7 +160,7 @@ PO-8903 -> Apex Precision (400 EA ENC-AL-6061) - Released W40
         </div>
 
         <p className="text-xs text-slate-600 leading-relaxed font-medium">
-          Export unified operational ledgers across all five stages (S&OP, DRP, MPS, CRP, and MRP) for ERP synchronization or executive reporting.
+          {t('modals.exportModal.description')}
         </p>
 
         <div className="space-y-2.5 text-xs">
@@ -94,10 +174,10 @@ PO-8903 -> Apex Precision (400 EA ENC-AL-6061) - Released W40
               </div>
               <div>
                 <div className="font-black text-slate-900 group-hover:text-black">
-                  Full Operations Ledger (Text / CSV)
+                  {t('modals.exportModal.csvTitle')}
                 </div>
                 <div className="text-[11px] text-slate-500 font-medium">
-                  Tabular consolidation of all time-phased matrices
+                  {t('modals.exportModal.csvSubtitle')}
                 </div>
               </div>
             </div>
@@ -116,10 +196,10 @@ PO-8903 -> Apex Precision (400 EA ENC-AL-6061) - Released W40
               </div>
               <div>
                 <div className="font-black text-slate-900 group-hover:text-black">
-                  ERP Integration Payload (JSON)
+                  {t('modals.exportModal.jsonTitle')}
                 </div>
                 <div className="text-[11px] text-slate-500 font-medium">
-                  Raw structured records for SAP / NetSuite ingestion
+                  {t('modals.exportModal.jsonSubtitle')}
                 </div>
               </div>
             </div>
@@ -134,7 +214,7 @@ PO-8903 -> Apex Precision (400 EA ENC-AL-6061) - Released W40
             onClick={onClose}
             className="px-5 py-2 text-xs font-bold text-slate-700 hover:text-black rounded-full hover:bg-slate-100 transition-colors cursor-pointer"
           >
-            Close
+            {t('modals.exportModal.close')}
           </button>
         </div>
       </div>
